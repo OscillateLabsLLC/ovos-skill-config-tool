@@ -39,12 +39,14 @@ package = true
 requires = ["setuptools>=64.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages.find]
 include = ["ovos_skill_config*", "static"]
 
 [tool.pytest.ini_options]
 addopts = "--cov=ovos_skill_config --cov-report=term-missing"
-# filterwarnings = ["ignore::pytest.PytestCollectionWarning"]
 
 [tool.coverage.run]
 source = ["ovos_skill_config"]
