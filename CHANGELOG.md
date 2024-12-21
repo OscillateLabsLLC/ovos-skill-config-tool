@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.1.0...v0.1.1) (2024-12-21)
+
+
+### Bug Fixes
+
+* properly include static folder ([8884c1d](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/8884c1da4c24cb6433e108bfcd16bb240f08583c))
+
 ## 0.1.0 (2024-12-21)
 
 
