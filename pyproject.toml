@@ -1,23 +1,53 @@
 [project]
 authors = [{ "name" = "Oscillate Labs", "email" = "mike@oscillatelabs.net" }]
-name = "ovos-skill-config"
-version = "0.1.0"
+name = "ovos-skill-config-tool"
 description = "OpenVoiceOS/Neon Skills Configuration Tool"
 license = { "file" = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.9"
-
+classifiers = [
+    "Topic :: Text Processing :: Linguistic",
+    "Programming Language :: Python :: 3",
+]
+keywords = [
+    "mycroft",
+    "ovos",
+    "neon",
+    "plugin",
+    "configuration",
+    "skills",
+    "tool",
+]
+dynamic = ["version"]
+urls = { Homepage = "https://github.com/OscillateLabsLLC/ovos-skill-config-tool" }
+scripts = { "ovos-skill-config-tool" = "ovos_skill_config.main:main" }
 dependencies = ["fastapi>=0.115.6", "json-database>=0.7.0", "uvicorn>=0.34.0"]
 
 [dependency-groups]
-dev = ["ruff>=0.8.4"]
+dev = [
+    "httpx>=0.28.1",
+    "pytest-cov>=6.0.0",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.0",
+    "ruff>=0.8.4",
+]
 
-[tool]
-uv.package = true
+[tool.uv]
+package = true
 
 [build-system]
-requires = ["setuptools >= 46.1.0", "wheel", "toml"]
+requires = ["setuptools>=64.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-package-dir = { "" = "ovos_skill_config" }
+[tool.setuptools.packages.find]
+include = ["ovos_skill_config*", "static"]
+
+[tool.pytest.ini_options]
+addopts = "--cov=ovos_skill_config --cov-report=term-missing"
+# filterwarnings = ["ignore::pytest.PytestCollectionWarning"]
+
+[tool.coverage.run]
+source = ["ovos_skill_config"]
+
+[tool.ruff.lint]
+extend-select = ["I"]

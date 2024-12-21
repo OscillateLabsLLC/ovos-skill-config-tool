@@ -1,7 +1,7 @@
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -45,9 +45,14 @@ class SkillSettings:
         if not self.settings_path.parent.exists():
             self.settings_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            self.db = JsonStorage(str(self.settings_path))  # JsonStorage expects string path
+            self.settings_path.touch(exist_ok=True)
+            self.db = JsonStorage(
+                str(self.settings_path)
+            )  # JsonStorage expects string path
         except Exception as e:
-            raise RuntimeError(f"Failed to initialize settings database: {str(e)}") from e
+            raise RuntimeError(
+                f"Failed to initialize settings database: {str(e)}"
+            ) from e
 
     def get_setting(self, key: str, default: Any = None) -> Any:
         """Get a specific setting value."""
@@ -149,21 +154,6 @@ async def get_skill_setting(skill_id: str, key: str) -> Dict:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
-@app.post("/api/v1/skills/{skill_id}/settings/{key}")
-async def update_skill_setting(skill_id: str, key: str, value: Any) -> Dict:
-    """Update a specific setting value for a skill."""
-    try:
-        skill_settings = SkillSettings(skill_id)
-        updated = skill_settings.update_setting(key, value)
-        return {"id": skill_id, "updated": updated}
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Skill not found") from exc
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
-
-
 @app.post("/api/v1/skills/{skill_id}/merge")
 async def merge_skill_settings(skill_id: str, settings: Dict) -> Dict:
     """Merge new settings with existing ones."""
@@ -195,9 +185,14 @@ async def replace_skill_settings(skill_id: str, settings: Dict) -> Dict:
 
 
 # Mount the static files (React app) at the root
-app.mount("/", StaticFiles(directory="ovos_skill_config/static", html=True), name="static")
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
-if __name__ == "__main__":
+
+def main():
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+if __name__ == "__main__":
+    main()
