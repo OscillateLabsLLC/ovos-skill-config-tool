@@ -184,8 +184,11 @@ async def replace_skill_settings(skill_id: str, settings: Dict) -> Dict:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
-# Mount the static files (React app) at the root
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+package_dir = Path(__file__).parent
+static_dir = os.path.join(package_dir, "static")
+
+# Mount the static files
+app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
 
 def main():

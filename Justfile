@@ -1,5 +1,9 @@
 build-fe:
-  rm -rf static && mkdir -p static && cd frontend/ovos-settings-ui && npx vite build && cp -R dist/* ../../static
+  rm -rf ovos_skill_config/static && \
+  mkdir -p ovos_skill_config/static && \
+  cd frontend/ovos-settings-ui && \
+  npx vite build && \
+  cp -R dist/* ../../ovos_skill_config/static
 run:
   python ovos_skill_config/main.py
 test:
