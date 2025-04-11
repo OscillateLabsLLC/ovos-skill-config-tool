@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.1.3...v0.2.0) (2025-04-11)
+
+
+### Features
+
+* configurable port ([b7c632f](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/b7c632fac84485f7f5453ac04818143c5e2aacb4))
+* hide empty skills ([9beb74a](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/9beb74a8e007a23c0831a15cdb40e77f3022b256))
+* hide empty skills ([bf121f9](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/bf121f9dfbb47bf06a038e61aecd34e0b22807f5))
+
 ## [0.1.3](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.1.2...v0.1.3) (2024-12-21)
 
 
