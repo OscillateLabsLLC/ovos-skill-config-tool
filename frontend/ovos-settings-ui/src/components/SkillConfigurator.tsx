@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Settings, Eye, EyeOff } from "lucide-react";
+import { Settings, Eye, EyeOff, Github } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Header } from "./Header";
 import SettingEditor from "./SettingEditor";
@@ -204,21 +204,36 @@ export const SkillConfigurator: React.FC = () => {
       <main className="max-w-7xl mx-auto p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold">Skill Settings</h2>
-          <button
-            onClick={toggleHideEmptySkills}
-            className={cn(
-              "px-4 py-2 rounded-md text-sm font-medium transition-colors",
-              "bg-primary/10 text-primary hover:bg-primary/20",
-              "flex items-center gap-2"
-            )}
-          >
-            {hideEmptySkills ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
-            {hideEmptySkills ? "Show Empty Skills" : "Hide Empty Skills"}
-          </button>
+          <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/OscillateLabsLLC/ovos-skill-config-tool/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                "bg-primary/10 text-primary hover:bg-primary/20",
+                "flex items-center gap-2"
+              )}
+            >
+              <Github className="h-4 w-4" />
+              Report Issue
+            </a>
+            <button
+              onClick={toggleHideEmptySkills}
+              className={cn(
+                "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                "bg-primary/10 text-primary hover:bg-primary/20",
+                "flex items-center gap-2"
+              )}
+            >
+              {hideEmptySkills ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+              {hideEmptySkills ? "Show Empty Skills" : "Hide Empty Skills"}
+            </button>
+          </div>
         </div>
         <Accordion type="single" collapsible className="space-y-2">
           {skills
