@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Settings } from "lucide-react";
+import { Settings, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Header } from "./Header";
 import SettingEditor from "./SettingEditor";
@@ -32,6 +32,7 @@ export const SkillConfigurator: React.FC = () => {
   const [skills, setSkills] = useState<SkillSetting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hideEmptySkills, setHideEmptySkills] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("theme-preference");
@@ -86,6 +87,7 @@ export const SkillConfigurator: React.FC = () => {
   }, []);
 
   const toggleTheme = () => setIsDark((prev) => !prev);
+  const toggleHideEmptySkills = () => setHideEmptySkills((prev) => !prev);
 
   const handleDeleteSetting = async (skillId: string, keyToDelete: string) => {
     try {
@@ -200,67 +202,95 @@ export const SkillConfigurator: React.FC = () => {
       <Header isDark={isDark} onThemeToggle={toggleTheme} skills={skills} />
 
       <main className="max-w-7xl mx-auto p-4 md:p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">Skill Settings</h2>
+          <button
+            onClick={toggleHideEmptySkills}
+            className={cn(
+              "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+              "bg-primary/10 text-primary hover:bg-primary/20",
+              "flex items-center gap-2"
+            )}
+          >
+            {hideEmptySkills ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+            {hideEmptySkills ? "Show Empty Skills" : "Hide Empty Skills"}
+          </button>
+        </div>
         <Accordion type="single" collapsible className="space-y-2">
-          {skills.map((skill) => {
-            const { name, author } = getSkillInfo(skill.id);
-            const settingsCount = Object.keys(skill.settings).length;
+          {skills
+            .filter(skill => !hideEmptySkills || Object.keys(skill.settings).length > 0)
+            .sort((a, b) => {
+              const aEmpty = Object.keys(a.settings).length === 0;
+              const bEmpty = Object.keys(b.settings).length === 0;
+              if (aEmpty && !bEmpty) return 1;
+              if (!aEmpty && bEmpty) return -1;
+              return getSkillInfo(a.id).name.localeCompare(getSkillInfo(b.id).name);
+            })
+            .map((skill) => {
+              const { name, author } = getSkillInfo(skill.id);
+              const settingsCount = Object.keys(skill.settings).length;
 
-            return (
-              <AccordionItem
-                key={skill.id}
-                value={skill.id}
-                className={cn(
-                  "rounded-lg border shadow-sm",
-                  "transition-colors duration-200",
-                  "bg-card text-card-foreground",
-                  "hover:bg-accent/50"
-                )}
-              >
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <div className="flex items-center gap-3 w-full">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
-                      <Settings className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <div className="font-semibold">{name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        by {author} • {settingsCount} settings
+              return (
+                <AccordionItem
+                  key={skill.id}
+                  value={skill.id}
+                  className={cn(
+                    "rounded-lg border shadow-sm",
+                    "transition-colors duration-200",
+                    "bg-card text-card-foreground",
+                    "hover:bg-accent/50",
+                    settingsCount === 0 && "opacity-60"
+                  )}
+                >
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                    <div className="flex items-center gap-3 w-full">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
+                        <Settings className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="font-semibold">{name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          by {author} • {settingsCount} settings
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </AccordionTrigger>
+                  </AccordionTrigger>
 
-                <AccordionContent className="px-4 pb-4">
-                  <div className="space-y-4 pt-2">
-                    {Object.entries(skill.settings).map(([key, value]) => (
-                      <div
-                        key={key}
-                        className="border-b border-border pb-3 last:border-0"
-                      >
-                        <SettingEditor
-                          settingKey={key}
-                          value={value}
-                          onSave={async (key, newValue) => {
-                            await handleSaveSetting(skill.id, key, newValue);
-                          }}
-                          onDelete={async (key) => {
-                            await handleDeleteSetting(skill.id, key);
+                  <AccordionContent className="px-4 pb-4">
+                    <div className="space-y-4 pt-2">
+                      {Object.entries(skill.settings).map(([key, value]) => (
+                        <div
+                          key={key}
+                          className="border-b border-border pb-3 last:border-0"
+                        >
+                          <SettingEditor
+                            settingKey={key}
+                            value={value}
+                            onSave={async (key, newValue) => {
+                              await handleSaveSetting(skill.id, key, newValue);
+                            }}
+                            onDelete={async (key) => {
+                              await handleDeleteSetting(skill.id, key);
+                            }}
+                          />
+                        </div>
+                      ))}
+                      <div className="pt-2">
+                        <NewSettingEditor
+                          onSave={async (key, value) => {
+                            await handleSaveSetting(skill.id, key, value);
                           }}
                         />
                       </div>
-                    ))}
-                    <div className="pt-2">
-                      <NewSettingEditor
-                        onSave={async (key, value) => {
-                          await handleSaveSetting(skill.id, key, value);
-                        }}
-                      />
                     </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
         </Accordion>
       </main>
     </div>
