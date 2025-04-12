@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.2.0...v0.3.0) (2025-04-12)
+
+
+### Features
+
+* button to report issues ([ae50608](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/ae50608641a27860bee8b6045d7c3faf004ae450))
+* links in UI and custom logo ([4140bba](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/4140bbad2079f7693ee5db0bb8d2ff0f75f1c8cb))
+* UI links and custom logo ([1712125](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/171212528b24bf4e1db17a7333d63f1e807076a9))
+* UI links and custom logo ([1712125](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/171212528b24bf4e1db17a7333d63f1e807076a9))
+
 ## [0.2.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.1.3...v0.2.0) (2025-04-11)
 
 
