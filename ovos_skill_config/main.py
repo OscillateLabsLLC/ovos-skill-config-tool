@@ -238,10 +238,16 @@ async def replace_skill_settings(skill_id: str, settings: Dict, username: str = 
 
 
 package_dir = Path(__file__).parent
-static_dir = os.path.join(package_dir, "static")
+# Define the default path relative to the package
+default_static_dir = package_dir / "static"
+# Get the static directory from env var, defaulting to the package's static dir
+static_dir_path = os.getenv("OVOS_CONFIG_STATIC_DIR", str(default_static_dir))
+# Ensure it's a Path object for consistency if needed, although StaticFiles accepts string
+static_dir = Path(static_dir_path)
 
 # Mount the static files
-app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
+# Convert Path back to string if StaticFiles requires it (though usually not needed)
+app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
 
 
 def main():
