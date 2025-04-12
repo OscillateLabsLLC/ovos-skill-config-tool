@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { Header } from "./Header";
 import SettingEditor from "./SettingEditor";
 import NewSettingEditor from "./NewSettingEditor";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "@/lib/auth";
 
 interface LogoConfig {
   type: 'image' | 'text';
@@ -38,6 +38,14 @@ const getThemePreference = () => {
   return false;
 };
 
+const getHideEmptySkillsPreference = () => {
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("hide-empty-skills-preference");
+    return stored === "true"; // Default to false if not found or invalid
+  }
+  return false;
+};
+
 interface SkillConfiguratorProps {
   logo: LogoConfig;
 }
@@ -48,7 +56,7 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
   const [skills, setSkills] = useState<SkillSetting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hideEmptySkills, setHideEmptySkills] = useState(false);
+  const [hideEmptySkills, setHideEmptySkills] = useState(getHideEmptySkillsPreference);
 
   useEffect(() => {
     const stored = localStorage.getItem("theme-preference");
@@ -68,6 +76,12 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
     document.documentElement.classList.toggle("dark", isDark);
     localStorage.setItem("theme-preference", isDark ? "dark" : "light");
   }, [isDark]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("hide-empty-skills-preference", String(hideEmptySkills));
+    }
+  }, [hideEmptySkills]);
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -353,6 +367,22 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
             })}
         </Accordion>
       </main>
+
+      <footer className="text-center p-4 text-sm text-muted-foreground">
+        <p>
+          Made with 🤓 ❤️ by <a href="https://oscillatelabs.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Oscillate Labs</a> (Copyright 2025)
+        </p>
+        <p className="mt-1">
+          <a 
+            href="https://github.com/OscillateLabsLLC/ovos-skill-config-tool/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            View License (Apache 2.0)
+          </a>
+        </p>
+      </footer>
     </div>
   );
 };
