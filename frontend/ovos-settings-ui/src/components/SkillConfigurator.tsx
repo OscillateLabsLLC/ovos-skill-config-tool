@@ -5,13 +5,27 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Settings, Eye, EyeOff, Github } from "lucide-react";
+import { Settings, Eye, EyeOff } from "lucide-react";
+import { siGithub } from "simple-icons";
 import { cn } from "@/lib/utils";
 import { Header } from "./Header";
 import SettingEditor from "./SettingEditor";
 import NewSettingEditor from "./NewSettingEditor";
 
-interface SkillSetting {
+interface LogoConfig {
+  type: 'image' | 'text';
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  text?: string;
+}
+
+interface AppConfig {
+  logo: LogoConfig;
+}
+
+export interface SkillSetting {
   id: string;
   settings: Record<string, any>;
 }
@@ -33,6 +47,12 @@ export const SkillConfigurator: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hideEmptySkills, setHideEmptySkills] = useState(false);
+  const [config, setConfig] = useState<AppConfig>({
+    logo: {
+      type: 'text',
+      text: 'OVOS'
+    }
+  });
 
   useEffect(() => {
     const stored = localStorage.getItem("theme-preference");
@@ -84,6 +104,22 @@ export const SkillConfigurator: React.FC = () => {
     };
 
     fetchSkills();
+  }, []);
+
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const response = await fetch('/config.json');
+        if (response.ok) {
+          const data = await response.json();
+          setConfig(data);
+        }
+      } catch (err) {
+        console.warn('Failed to load config.json, using defaults');
+        console.error(err);
+      }
+    };
+    loadConfig();
   }, []);
 
   const toggleTheme = () => setIsDark((prev) => !prev);
@@ -199,7 +235,12 @@ export const SkillConfigurator: React.FC = () => {
         isDark ? "dark" : ""
       )}
     >
-      <Header isDark={isDark} onThemeToggle={toggleTheme} skills={skills} />
+      <Header 
+        isDark={isDark} 
+        onThemeToggle={toggleTheme} 
+        skills={skills}
+        logo={config.logo}
+      />
 
       <main className="max-w-7xl mx-auto p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
@@ -215,7 +256,14 @@ export const SkillConfigurator: React.FC = () => {
                 "flex items-center gap-2"
               )}
             >
-              <Github className="h-4 w-4" />
+              <svg
+                role="img"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="currentColor"
+                dangerouslySetInnerHTML={{ __html: siGithub.svg }}
+              />
               Report Issue
             </a>
             <button

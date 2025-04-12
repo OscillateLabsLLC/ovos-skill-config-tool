@@ -25,6 +25,39 @@ A modern web interface for configuring OpenVoiceOS and Neon AI skills, built wit
 
 Then run `ovos-skill-config-tool` from your virtual environment.
 
+## Logo Customization
+
+The application logo can be customized by providing a `config.json` file in the public directory. This is particularly useful when running in a container environment.
+
+### Configuration Options
+
+Create a `config.json` file with the following structure:
+
+```json
+{
+  "logo": {
+    "type": "image", // or "text"
+    "src": "/logo.png", // path to your logo image (relative to public directory)
+    "alt": "My Custom Logo", // alt text for accessibility
+    "width": 32, // optional, defaults to 32
+    "height": 32, // optional, defaults to 32
+    "text": "OVOS" // text to display if type is "text"
+  }
+}
+```
+
+### Using in a Container
+
+When running in a container, you can mount your custom configuration and logo:
+
+```bash
+docker run -v /path/to/your/config.json:/app/public/config.json \
+           -v /path/to/your/logo.png:/app/public/logo.png \
+           your-image
+```
+
+If no configuration is provided, the application will default to displaying "OVOS" as text.
+
 ## Developer Installation
 
 1. Clone the repository:
