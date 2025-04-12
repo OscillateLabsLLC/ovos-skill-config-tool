@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.5.1...v0.5.2) (2025-04-12)
+
+
+### Bug Fixes
+
+* **gha:** cross-platform docker compat ([6568764](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/65687640c0b750a4bd60fcb886640829c7df3754))
+
 ## [0.5.1](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.5.0...v0.5.1) (2025-04-12)
 
 
