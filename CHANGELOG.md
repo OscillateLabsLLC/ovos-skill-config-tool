@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.6.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.5.3...v0.6.0) (2025-04-12)
+
+
+### Features
+
+* add footer to configuration tool ([c68de5e](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/c68de5e521b95cc14d137ecd5367abb41bb5f435))
+* add footer to configuration tool ([73caf5b](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/73caf5b23a460bbcd3c9f8264d41ef350f7c9319))
+* store hideEmptySkills preference ([27d6cf2](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/27d6cf24d7d680a3d04813967088f0b951788b96))
+
+
+### Bug Fixes
+
+* correct link ([1e95d14](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/1e95d14af25a82c6c2c064420e8d71adc53d5846))
+* **docker:** set non-root user/group to 1000 ([6b31824](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/6b31824721a3244d58ec9e9f38bd617107a971a3))
+* **docker:** set non-root user/group to 1000 ([6b31824](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/6b31824721a3244d58ec9e9f38bd617107a971a3))
+* **docker:** set non-root user/group to 1000 ([9ee71a4](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/9ee71a45248b1b6266a95157e34380b6af64d2d7))
+
 ## [0.5.3](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.5.2...v0.5.3) (2025-04-12)
 
 
