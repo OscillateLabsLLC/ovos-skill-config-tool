@@ -18,7 +18,7 @@ export const NewSettingEditor: React.FC<NewSettingEditorProps> = ({ onSave }) =>
     setIsLoading(true);
     
     try {
-      let processedValue = value;
+      let processedValue: string | number | boolean = value;
       switch (type) {
         case 'number':
           processedValue = Number(value);

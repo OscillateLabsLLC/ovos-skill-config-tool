@@ -83,15 +83,15 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
         const data = await response.json();
 
         const processedData = data
-          .map((skill) => ({
+          .map((skill: SkillSetting) => ({
             ...skill,
             settings: Object.fromEntries(
               Object.entries(skill.settings)
-                .filter(([key]) => key !== "__mycroft_skill_firstrun")
-                .sort(([a], [b]) => a.localeCompare(b))
+                .filter(([key]: [string, any]) => key !== "__mycroft_skill_firstrun")
+                .sort(([a]: [string, any], [b]: [string, any]) => a.localeCompare(b))
             ),
           }))
-          .sort((a, b) =>
+          .sort((a: SkillSetting, b: SkillSetting) =>
             getSkillInfo(a.id).name.localeCompare(getSkillInfo(b.id).name)
           );
 

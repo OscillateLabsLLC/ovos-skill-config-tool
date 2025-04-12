@@ -30,7 +30,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, logo }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isDark, setIsDark] = useState(getThemePreference);
+  const isDark = useState(getThemePreference)[0];
   const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
 
@@ -63,7 +63,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, logo }) => {
       <div className="max-w-md w-full space-y-8 p-8 bg-card rounded-lg shadow-lg">
         <div className="text-center">
           <div className="flex flex-col items-center gap-4">
-            {logo.type === 'image' && logo.src && (
+            {logo.type === 'image' && logo.src && !imageError ? (
               <img
                 src={logo.src}
                 alt={logo.alt || logo.text || 'Logo'}
@@ -72,10 +72,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, logo }) => {
                 className="mx-auto"
                 onError={() => setImageError(true)}
               />
+            ) : (
+              <h1 className="text-4xl font-bold text-primary">
+                {logo.text || logo.alt || 'OVOS'}
+              </h1>
             )}
-            <h1 className="text-4xl font-bold text-primary">
-              {logo.text || logo.alt || 'OVOS'}
-            </h1>
           </div>
           <h2 className="mt-6 text-2xl font-semibold text-foreground">
             Sign in to your account

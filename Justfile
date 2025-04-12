@@ -21,7 +21,7 @@ docker-build:
 
 docker-run:
   echo "Running Docker image {{image_name}} ..."
-  docker run --rm --name ovos-config -p 8000:8000 {{image_name}}
+  docker run --rm --name ovos-config -p 8000:8000 -v $HOME/.config:/home/appuser/.config {{image_name}}
 
 docker-run-dev:
   echo "Running Docker image {{image_name}} with dev overrides..."
@@ -29,7 +29,7 @@ docker-run-dev:
   docker run --rm --name ovos-config -p 8000:8000 \
     -v $(pwd)/my-config.json:/app/static/config.json \
     -v $(pwd)/my-logo.png:/app/static/my-logo.png \
-    -v $HOME/.config/ovos-skill-config-tool:/home/appuser/.config \
+    -v $HOME/.config:/home/appuser/.config \
     -e OVOS_CONFIG_USERNAME=dev \
     -e OVOS_CONFIG_PASSWORD=dev \
     {{image_name}}

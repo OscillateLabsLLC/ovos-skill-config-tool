@@ -1,8 +1,8 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider, useAuth } from './lib/auth'
-import { LoginPage } from './components/LoginPage'
-import SkillConfigurator from './components/SkillConfigurator'
+import { AuthProvider, useAuth } from '@/lib/auth'
+import { LoginPage } from '@/components/LoginPage'
+import SkillConfigurator from '@/components/SkillConfigurator'
 import { useEffect, useState } from 'react'
 
 interface LogoConfig {

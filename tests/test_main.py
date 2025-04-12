@@ -122,7 +122,9 @@ class TestAPI:
         settings.update_setting("existing_key", "existing_value")
 
         new_settings = {"new_key": "new_value"}
-        response = client.post(f"/api/v1/skills/{test_skill_id}/merge", json=new_settings)
+        response = client.post(
+            f"/api/v1/skills/{test_skill_id}/merge", json=new_settings
+        )
         assert response.status_code == 200
         data = response.json()
         assert data["settings"]["existing_key"] == "existing_value"
@@ -152,10 +154,14 @@ class TestAPI:
         response = client.get(f"/api/v1/skills/{test_skill_id}")
         assert response.status_code == 401
 
-        response = client.post(f"/api/v1/skills/{test_skill_id}/merge", json={"test": "value"})
+        response = client.post(
+            f"/api/v1/skills/{test_skill_id}/merge", json={"test": "value"}
+        )
         assert response.status_code == 401
 
-        response = client.post(f"/api/v1/skills/{test_skill_id}", json={"test": "value"})
+        response = client.post(
+            f"/api/v1/skills/{test_skill_id}", json={"test": "value"}
+        )
         assert response.status_code == 401
 
         # Restore the override after the test

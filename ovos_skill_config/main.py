@@ -103,9 +103,13 @@ class SkillSettings:
             if self.settings_path.stat().st_size == 0:
                 with open(self.settings_path, "w") as f:
                     f.write("{}")
-            self.db = JsonStorage(str(self.settings_path))  # JsonStorage expects string path
+            self.db = JsonStorage(
+                str(self.settings_path)
+            )  # JsonStorage expects string path
         except Exception as e:
-            raise RuntimeError(f"Failed to initialize settings database: {str(e)}") from e
+            raise RuntimeError(
+                f"Failed to initialize settings database: {str(e)}"
+            ) from e
 
     def get_setting(self, key: str, default: Any = None) -> Any:
         """Get a specific setting value."""
@@ -181,7 +185,9 @@ async def list_skills(username: str = Depends(verify_credentials)) -> List[Dict]
 
 
 @app.get("/api/v1/skills/{skill_id}")
-async def get_skill_settings(skill_id: str, username: str = Depends(verify_credentials)) -> Dict:
+async def get_skill_settings(
+    skill_id: str, username: str = Depends(verify_credentials)
+) -> Dict:
     """Get settings for a specific skill."""
     try:
         skill_settings = SkillSettings(skill_id)
@@ -193,7 +199,9 @@ async def get_skill_settings(skill_id: str, username: str = Depends(verify_crede
 
 
 @app.get("/api/v1/skills/{skill_id}/settings/{key}")
-async def get_skill_setting(skill_id: str, key: str, username: str = Depends(verify_credentials)) -> Dict:
+async def get_skill_setting(
+    skill_id: str, key: str, username: str = Depends(verify_credentials)
+) -> Dict:
     """Get a specific setting value for a skill."""
     try:
         skill_settings = SkillSettings(skill_id)
@@ -208,7 +216,9 @@ async def get_skill_setting(skill_id: str, key: str, username: str = Depends(ver
 
 
 @app.post("/api/v1/skills/{skill_id}/merge")
-async def merge_skill_settings(skill_id: str, settings: Dict, username: str = Depends(verify_credentials)) -> Dict:
+async def merge_skill_settings(
+    skill_id: str, settings: Dict, username: str = Depends(verify_credentials)
+) -> Dict:
     """Merge new settings with existing ones."""
     try:
         skill_settings = SkillSettings(skill_id)
@@ -223,7 +233,9 @@ async def merge_skill_settings(skill_id: str, settings: Dict, username: str = De
 
 
 @app.post("/api/v1/skills/{skill_id}")
-async def replace_skill_settings(skill_id: str, settings: Dict, username: str = Depends(verify_credentials)) -> Dict:
+async def replace_skill_settings(
+    skill_id: str, settings: Dict, username: str = Depends(verify_credentials)
+) -> Dict:
     """Replace all settings for a skill."""
     try:
         skill_settings = SkillSettings(skill_id)
