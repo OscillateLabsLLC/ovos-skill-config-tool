@@ -12,12 +12,36 @@ RUN npx vite build
 
 # Stage 2: Build the backend dependencies
 FROM python:3.13-slim AS backend-builder
+# Add ARGs for build platform
+ARG TARGETPLATFORM 
+ARG TARGETARCH
 WORKDIR /app
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# Install curl for downloading uv
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install system dependencies if needed (e.g., for packages with C extensions)
-# RUN apt-get update && apt-get install -y --no-install-recommends some-package && rm -rf /var/lib/apt/lists/*
+# Download and install static uv binary for the target architecture
+# Pin a specific version for stability
+ARG UV_VERSION=0.4.1 
+RUN set -eux; \
+    arch=$TARGETARCH; \
+    # Map Docker arch names to uv release artifact names
+    case $arch in \
+        amd64) uv_arch="x86_64-unknown-linux-gnu" ;; \
+        arm64) uv_arch="aarch64-unknown-linux-gnu" ;; \
+        arm)   uv_arch="arm-unknown-linux-gnueabihf" ;; \
+        *) echo >&2 "error: unsupported architecture: $arch"; exit 1 ;; \
+    esac; \
+    echo "Downloading uv version ${UV_VERSION} for ${uv_arch}..."; \
+    curl -fsSL "https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-${uv_arch}.tar.gz" -o uv.tar.gz; \
+    tar -xzf uv.tar.gz -C /usr/local/bin --strip-components=1; \
+    chmod +x /usr/local/bin/uv; \
+    rm uv.tar.gz; \
+    # Verify installation
+    uv --version
 
 # Create a virtual environment
 RUN python -m venv /opt/venv
