@@ -60,8 +60,8 @@ FROM python:3.13-slim AS final
 WORKDIR /app
 
 # Create a non-root user and group
-RUN groupadd --system --gid 1001 appuser && \
-    useradd --system --uid 1001 --gid 1001 appuser
+RUN groupadd --system --gid 1000 appuser && \
+    useradd --system --uid 1000 --gid 1000 appuser
 
 # Copy virtual environment from builder stage
 ARG VENV_PATH=/opt/venv # Keep VENV_PATH ARG for clarity here
