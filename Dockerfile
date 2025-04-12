@@ -2,18 +2,9 @@
 FROM node:22-alpine AS frontend-builder
 WORKDIR /app/frontend/ovos-settings-ui
 
-# Copy frontend specific files
-COPY frontend/ovos-settings-ui/package.json frontend/ovos-settings-ui/package-lock.json* ./
-COPY frontend/ovos-settings-ui/index.html ./
-COPY frontend/ovos-settings-ui/vite.config.ts ./
-COPY frontend/ovos-settings-ui/tsconfig.json ./
-COPY frontend/ovos-settings-ui/tsconfig.app.json ./
-COPY frontend/ovos-settings-ui/tsconfig.node.json ./
-COPY frontend/ovos-settings-ui/public ./public
-COPY frontend/ovos-settings-ui/src ./src
-COPY frontend/ovos-settings-ui/vite.config.ts ./
-COPY frontend/ovos-settings-ui/tailwind.config.js ./
-COPY frontend/ovos-settings-ui/postcss.config.js ./
+# Copy the entire frontend project context
+# This ensures all source files, libs, configs, etc. are included
+COPY frontend/ovos-settings-ui/ ./
 
 # Install dependencies and build
 RUN npm install
