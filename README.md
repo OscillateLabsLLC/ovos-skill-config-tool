@@ -177,6 +177,38 @@ docker run --rm --name ovos-config -p 8000:8000 \
 
 If no custom `config.json` is mounted, the application will use the default configuration built into the image.
 
+#### Troubleshooting
+
+If you encounter issues reading from skill config files, ensure that the files are readable by the application. You can check this by running:
+
+```bash
+docker exec -it ovos-config ls -l /home/appuser/.config/ovos/skills # replace with the path to the skill config files
+```
+
+If the files are not readable, you can change the user and group that the container runs as to match your user and group. _We do not recommend running the container as root or changing the permissions of the files!_
+
+If using Docker directly:
+
+```bash
+docker run --rm --name ovos-config -p 8000:8000 \
+  -v $HOME/.config:/home/appuser/.config \
+  -u $(id -u):$(id -g) \
+  ghcr.io/oscillatelabsllc/ovos-skill-config-tool:latest
+```
+
+If using Docker Compose:
+
+```yaml
+services:
+  ovos-config:
+    image: ghcr.io/oscillatelabsllc/ovos-skill-config-tool:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - $HOME/.config:/home/appuser/.config
+    user: $(id -u):$(id -g)
+```
+
 ## Developer Installation
 
 1. Clone the repository:
