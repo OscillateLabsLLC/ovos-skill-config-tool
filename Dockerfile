@@ -32,7 +32,6 @@ RUN set -eux; \
     case $arch in \
         amd64) uv_arch="x86_64-unknown-linux-gnu" ;; \
         arm64) uv_arch="aarch64-unknown-linux-gnu" ;; \
-        arm)   uv_arch="arm-unknown-linux-gnueabihf" ;; \
         *) echo >&2 "error: unsupported architecture: $arch"; exit 1 ;; \
     esac; \
     echo "Downloading uv version ${UV_VERSION} for ${uv_arch}..."; \
