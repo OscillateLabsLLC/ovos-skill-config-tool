@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { Header } from "./Header";
 import SettingEditor from "./SettingEditor";
 import NewSettingEditor from "./NewSettingEditor";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "@/lib/auth";
 
 interface LogoConfig {
   type: 'image' | 'text';
@@ -353,6 +353,22 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
             })}
         </Accordion>
       </main>
+
+      <footer className="text-center p-4 text-sm text-muted-foreground">
+        <p>
+          Made with 🤓 ❤️ by <a href="https://oscillatelabs.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Oscillate Labs</a> (Copyright 2025)
+        </p>
+        <p className="mt-1">
+          <a 
+            href="https://github.com/OscillateLabsLLC/ovos-skill-config-tool/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            View License (Apache 2.0)
+          </a>
+        </p>
+      </footer>
     </div>
   );
 };
