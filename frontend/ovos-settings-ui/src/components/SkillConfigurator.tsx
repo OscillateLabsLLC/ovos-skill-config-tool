@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { Header } from "./Header";
 import SettingEditor from "./SettingEditor";
 import NewSettingEditor from "./NewSettingEditor";
+import { useAuth } from "../lib/auth";
 
 interface LogoConfig {
   type: 'image' | 'text';
@@ -19,10 +20,6 @@ interface LogoConfig {
   width?: number;
   height?: number;
   text?: string;
-}
-
-interface AppConfig {
-  logo: LogoConfig;
 }
 
 export interface SkillSetting {
@@ -41,18 +38,17 @@ const getThemePreference = () => {
   return false;
 };
 
-export const SkillConfigurator: React.FC = () => {
+interface SkillConfiguratorProps {
+  logo: LogoConfig;
+}
+
+export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) => {
+  const { getAuthHeader } = useAuth();
   const [isDark, setIsDark] = useState(getThemePreference);
   const [skills, setSkills] = useState<SkillSetting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hideEmptySkills, setHideEmptySkills] = useState(false);
-  const [config, setConfig] = useState<AppConfig>({
-    logo: {
-      type: 'text',
-      text: 'OVOS'
-    }
-  });
 
   useEffect(() => {
     const stored = localStorage.getItem("theme-preference");
@@ -76,7 +72,13 @@ export const SkillConfigurator: React.FC = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const response = await fetch("/api/v1/skills");
+        const authHeader = getAuthHeader();
+        const response = await fetch("/api/v1/skills", {
+          headers: authHeader ? {
+            'Authorization': authHeader
+          } : undefined,
+          credentials: 'include'
+        });
         if (!response.ok) throw new Error("Failed to fetch skills");
         const data = await response.json();
 
@@ -104,31 +106,21 @@ export const SkillConfigurator: React.FC = () => {
     };
 
     fetchSkills();
-  }, []);
-
-  useEffect(() => {
-    const loadConfig = async () => {
-      try {
-        const response = await fetch('/config.json');
-        if (response.ok) {
-          const data = await response.json();
-          setConfig(data);
-        }
-      } catch (err) {
-        console.warn('Failed to load config.json, using defaults');
-        console.error(err);
-      }
-    };
-    loadConfig();
-  }, []);
+  }, [getAuthHeader]);
 
   const toggleTheme = () => setIsDark((prev) => !prev);
   const toggleHideEmptySkills = () => setHideEmptySkills((prev) => !prev);
 
   const handleDeleteSetting = async (skillId: string, keyToDelete: string) => {
     try {
+      const authHeader = getAuthHeader();
       // First get current settings
-      const response = await fetch(`/api/v1/skills/${skillId}`);
+      const response = await fetch(`/api/v1/skills/${skillId}`, {
+        headers: authHeader ? {
+          'Authorization': authHeader
+        } : undefined,
+        credentials: 'include'
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch current settings');
       }
@@ -145,7 +137,9 @@ export const SkillConfigurator: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(authHeader ? { 'Authorization': authHeader } : {})
         },
+        credentials: 'include',
         body: JSON.stringify(newSettings),
       });
 
@@ -178,11 +172,14 @@ export const SkillConfigurator: React.FC = () => {
   };
   const handleSaveSetting = async (skillId: string, key: string, value: any) => {
     try {
+      const authHeader = getAuthHeader();
       const response = await fetch(`/api/v1/skills/${skillId}/merge`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(authHeader ? { 'Authorization': authHeader } : {})
         },
+        credentials: 'include',
         body: JSON.stringify({
           [key]: value
         }),
@@ -239,7 +236,7 @@ export const SkillConfigurator: React.FC = () => {
         isDark={isDark} 
         onThemeToggle={toggleTheme} 
         skills={skills}
-        logo={config.logo}
+        logo={logo}
       />
 
       <main className="max-w-7xl mx-auto p-4 md:p-6">

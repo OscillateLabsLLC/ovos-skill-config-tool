@@ -1,15 +1,37 @@
+import base64
 import os
+import secrets
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
 from json_database import JsonStorage
 from json_database.exceptions import DatabaseNotCommitted
 
 app = FastAPI(title="OVOS/Neon Skill Configuration API")
+
+# Basic auth security
+security = HTTPBasic()
+
+# Default credentials (can be overridden by environment variables)
+DEFAULT_USERNAME = os.getenv("OVOS_CONFIG_USERNAME", "ovos")
+DEFAULT_PASSWORD = os.getenv("OVOS_CONFIG_PASSWORD", "ovos")
+
+
+def verify_credentials(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = secrets.compare_digest(credentials.username, DEFAULT_USERNAME)
+    correct_password = secrets.compare_digest(credentials.password, DEFAULT_PASSWORD)
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+        )
+    return credentials.username
+
 
 # Enable CORS
 app.add_middleware(
@@ -19,6 +41,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.post("/api/v1/auth/login")
+async def login(request: Request):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Basic "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization header",
+        )
+
+    try:
+        auth = auth_header.split(" ")[1]
+        decoded = base64.b64decode(auth).decode("utf-8")
+        username, password = decoded.split(":", 1)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization header",
+        ) from exc
+
+    correct_username = secrets.compare_digest(username, DEFAULT_USERNAME)
+    correct_password = secrets.compare_digest(password, DEFAULT_PASSWORD)
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+        )
+
+    return {"authenticated": True, "username": username}
 
 
 @lru_cache()
@@ -41,18 +93,19 @@ class SkillSettings:
         self._init_db()
 
     def _init_db(self):
-        """Initialize the JsonStorage database."""
+        """Initialize the JsonStorage database, ensuring it contains valid JSON."""
         if not self.settings_path.parent.exists():
             self.settings_path.parent.mkdir(parents=True, exist_ok=True)
         try:
+            # Ensure file exists
             self.settings_path.touch(exist_ok=True)
-            self.db = JsonStorage(
-                str(self.settings_path)
-            )  # JsonStorage expects string path
+            # Check if file is empty and initialize if necessary
+            if self.settings_path.stat().st_size == 0:
+                with open(self.settings_path, "w") as f:
+                    f.write("{}")
+            self.db = JsonStorage(str(self.settings_path))  # JsonStorage expects string path
         except Exception as e:
-            raise RuntimeError(
-                f"Failed to initialize settings database: {str(e)}"
-            ) from e
+            raise RuntimeError(f"Failed to initialize settings database: {str(e)}") from e
 
     def get_setting(self, key: str, default: Any = None) -> Any:
         """Get a specific setting value."""
@@ -102,7 +155,7 @@ class SkillSettings:
 
 
 @app.get("/api/v1/skills")
-async def list_skills() -> List[Dict]:
+async def list_skills(username: str = Depends(verify_credentials)) -> List[Dict]:
     """List all available skills with their settings."""
     skills_dir = get_config_dir()
     if not skills_dir.exists():
@@ -128,7 +181,7 @@ async def list_skills() -> List[Dict]:
 
 
 @app.get("/api/v1/skills/{skill_id}")
-async def get_skill_settings(skill_id: str) -> Dict:
+async def get_skill_settings(skill_id: str, username: str = Depends(verify_credentials)) -> Dict:
     """Get settings for a specific skill."""
     try:
         skill_settings = SkillSettings(skill_id)
@@ -140,7 +193,7 @@ async def get_skill_settings(skill_id: str) -> Dict:
 
 
 @app.get("/api/v1/skills/{skill_id}/settings/{key}")
-async def get_skill_setting(skill_id: str, key: str) -> Dict:
+async def get_skill_setting(skill_id: str, key: str, username: str = Depends(verify_credentials)) -> Dict:
     """Get a specific setting value for a skill."""
     try:
         skill_settings = SkillSettings(skill_id)
@@ -155,7 +208,7 @@ async def get_skill_setting(skill_id: str, key: str) -> Dict:
 
 
 @app.post("/api/v1/skills/{skill_id}/merge")
-async def merge_skill_settings(skill_id: str, settings: Dict) -> Dict:
+async def merge_skill_settings(skill_id: str, settings: Dict, username: str = Depends(verify_credentials)) -> Dict:
     """Merge new settings with existing ones."""
     try:
         skill_settings = SkillSettings(skill_id)
@@ -170,7 +223,7 @@ async def merge_skill_settings(skill_id: str, settings: Dict) -> Dict:
 
 
 @app.post("/api/v1/skills/{skill_id}")
-async def replace_skill_settings(skill_id: str, settings: Dict) -> Dict:
+async def replace_skill_settings(skill_id: str, settings: Dict, username: str = Depends(verify_credentials)) -> Dict:
     """Replace all settings for a skill."""
     try:
         skill_settings = SkillSettings(skill_id)
@@ -193,6 +246,7 @@ app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
 def main():
     import uvicorn
+
     port = os.getenv("CONFIG_PORT", "8000")
 
     uvicorn.run(app, host="0.0.0.0", port=int(port))
