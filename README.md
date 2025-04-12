@@ -8,6 +8,7 @@ A modern web interface for configuring OpenVoiceOS and Neon AI skills, built wit
 - Support for skill-specific configuration settings
 - Dark mode support
 - Skill grouping and organization
+- Basic Authentication for security
 
 ## Screenshots
 
@@ -18,12 +19,27 @@ A modern web interface for configuring OpenVoiceOS and Neon AI skills, built wit
 - **Frontend**: React with Vite
 - **Backend**: FastAPI
 - **Styling**: Modern Tailwind CSS with dark mode support
+- **Security**: Basic Authentication
 
 ## Installation
 
 `pip install ovos-skill-config-tool`
 
 Then run `ovos-skill-config-tool` from your virtual environment.
+
+## Authentication
+
+By default, the application uses Basic Authentication with the following credentials:
+
+- **Username**: `ovos`
+- **Password**: `ovos`
+
+You can override these credentials by setting the following environment variables before running the application:
+
+- `OVOS_CONFIG_USERNAME`: Sets the username.
+- `OVOS_CONFIG_PASSWORD`: Sets the password.
+
+All API endpoints under `/api/v1/` require Basic Authentication.
 
 ## Logo Customization
 

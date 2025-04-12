@@ -1,7 +1,8 @@
 import React from 'react';
-import { Moon, Sun, Download } from 'lucide-react';
+import { Moon, Sun, Download, LogOut } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { SkillSetting } from "./SkillConfigurator";
+import { useAuth } from '@/lib/auth';
 
 interface LogoConfig {
   type: 'image' | 'text';
@@ -20,6 +21,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ isDark, onThemeToggle, skills, logo }) => {
+  const { logout, username } = useAuth();
+
   const handleExport = () => {
     // Create a JSON file with formatted (pretty-printed) content
     const content = JSON.stringify(skills, null, 2);
@@ -55,6 +58,7 @@ export const Header: React.FC<HeaderProps> = ({ isDark, onThemeToggle, skills, l
           )}
         </div>
         <div className="ml-auto flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">User: {username}</span>
           <button
             onClick={handleExport}
             className={cn(
@@ -77,6 +81,16 @@ export const Header: React.FC<HeaderProps> = ({ isDark, onThemeToggle, skills, l
             ) : (
               <Moon className="h-5 w-5" />
             )}
+          </button>
+          <button
+            onClick={logout}
+            className={cn(
+              "rounded-md p-2 transition-colors",
+              "hover:bg-accent hover:text-accent-foreground"
+            )}
+            title="Logout"
+          >
+            <LogOut className="h-5 w-5" />
           </button>
         </div>
       </div>

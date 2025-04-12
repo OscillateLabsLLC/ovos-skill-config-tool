@@ -1,11 +1,23 @@
-import json
 from unittest.mock import patch
 
 import pytest
 from fastapi.testclient import TestClient
-from ovos_skill_config.main import SkillSettings, app, get_config_dir
+import base64
+
+from ovos_skill_config.main import SkillSettings, app, verify_credentials
 
 client = TestClient(app)
+
+# Test credentials
+TEST_USERNAME = "test_user"
+TEST_PASSWORD = "test_password"
+
+
+def override_verify_credentials():
+    return TEST_USERNAME
+
+
+app.dependency_overrides[verify_credentials] = override_verify_credentials
 
 
 @pytest.fixture
@@ -96,8 +108,13 @@ class TestAPI:
         assert not skill_path.exists()
 
         response = client.get("/api/v1/skills/faaaake")
-        assert response.status_code == 200
+        assert response.status_code == 200  # Non-existent skill creates settings
         assert skill_path.exists()
+        # Check if the created file has valid JSON
+        with open(skill_path, "r") as f:
+            import json
+
+            assert json.load(f) == {}
 
     def test_merge_skill_settings(self, mock_config_dir, test_skill_id):
         # Create skill with initial settings
@@ -105,9 +122,7 @@ class TestAPI:
         settings.update_setting("existing_key", "existing_value")
 
         new_settings = {"new_key": "new_value"}
-        response = client.post(
-            f"/api/v1/skills/{test_skill_id}/merge", json=new_settings
-        )
+        response = client.post(f"/api/v1/skills/{test_skill_id}/merge", json=new_settings)
         assert response.status_code == 200
         data = response.json()
         assert data["settings"]["existing_key"] == "existing_value"
@@ -124,3 +139,36 @@ class TestAPI:
         data = response.json()
         assert "old_key" not in data["settings"]
         assert data["settings"]["new_key"] == "new_value"
+
+    def test_unauthorized_access(self, mock_config_dir, test_skill_id):
+        """Test that endpoints require authentication when override is removed."""
+        # Temporarily remove the override for this test
+        app.dependency_overrides.pop(verify_credentials, None)
+
+        # Test without auth headers
+        response = client.get("/api/v1/skills")
+        assert response.status_code == 401
+
+        response = client.get(f"/api/v1/skills/{test_skill_id}")
+        assert response.status_code == 401
+
+        response = client.post(f"/api/v1/skills/{test_skill_id}/merge", json={"test": "value"})
+        assert response.status_code == 401
+
+        response = client.post(f"/api/v1/skills/{test_skill_id}", json={"test": "value"})
+        assert response.status_code == 401
+
+        # Restore the override after the test
+        app.dependency_overrides[verify_credentials] = override_verify_credentials
+
+    def test_invalid_auth(self, mock_config_dir, test_skill_id):
+        """Test that invalid auth headers are rejected when override is removed."""
+        # Temporarily remove the override for this test
+        app.dependency_overrides.pop(verify_credentials, None)
+
+        invalid_headers = {"Authorization": "Basic invalid"}
+        response = client.get("/api/v1/skills", headers=invalid_headers)
+        assert response.status_code == 401
+
+        # Restore the override after the test
+        app.dependency_overrides[verify_credentials] = override_verify_credentials
