@@ -106,3 +106,31 @@
     height: 0;
   }
 }
+
+/* Custom overrides for react18-json-view edit icons */
+/* Remove these rules as the library is no longer used */
+/*
+.json-view .json-view--edit,
+.json-view .json-view--copy,
+.json-view .json-view--delete, 
+.json-view .json-view--add 
+{
+  width: 2em !important; 
+  height: 2em !important; 
+  margin-left: 0.5rem !important; 
+  vertical-align: middle !important; 
+  padding: 0.2em !important; 
+}
+
+.json-view:hover > .json-view--edit,
+.json-view:hover > .json-view--copy,
+.json-view:hover > .json-view--delete,
+.json-view:hover > .json-view--add,
+.json-view .json-view--pair:hover > .json-view--edit,
+.json-view .json-view--pair:hover > .json-view--copy,
+.json-view .json-view--pair:hover > .json-view--delete,
+.json-view .json-view--pair:hover > .json-view--add
+{
+  display: inline-block;
+}
+*/

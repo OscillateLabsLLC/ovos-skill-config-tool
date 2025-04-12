@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -10,24 +10,52 @@ export const NewSettingEditor: React.FC<NewSettingEditorProps> = ({ onSave }) =>
   const [isAdding, setIsAdding] = useState(false);
   const [key, setKey] = useState('');
   const [value, setValue] = useState('');
-  const [type, setType] = useState<'string' | 'number' | 'boolean'>('string');
+  const [type, setType] = useState<'string' | 'number' | 'boolean' | 'object' | 'array'>('string');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Effect to set default value when type changes
+  useEffect(() => {
+    if (type === 'boolean') {
+      if (value !== 'true' && value !== 'false') {
+         setValue('true'); 
+      }
+    } else if (type === 'object' || type === 'array') {
+      // Clear/disable value input for complex types
+      setValue(''); // Clear any previous primitive value
+    } 
+  }, [type]); 
 
   const handleSave = async () => {
     if (!key.trim()) return;
     setIsLoading(true);
     
     try {
-      let processedValue: string | number | boolean = value;
+      // Initialize processedValue based on type
+      let processedValue: any;
       switch (type) {
         case 'number':
           processedValue = Number(value);
+          if (isNaN(processedValue)) {
+              alert("Invalid number input."); // Simple validation feedback
+              setIsLoading(false);
+              return;
+          }
           break;
         case 'boolean':
           processedValue = value === 'true';
           break;
+        case 'object':
+          processedValue = {}; // Save as empty object
+          break;
+        case 'array':
+          processedValue = []; // Save as empty array
+          break;
+        default: // string
+          processedValue = value;
+          break;
       }
       
+      console.log("NewSettingEditor sending:", { key: key.trim(), valueState: value, typeState: type, processedValue });
       await onSave(key.trim(), processedValue);
       setIsAdding(false);
       setKey('');
@@ -35,6 +63,7 @@ export const NewSettingEditor: React.FC<NewSettingEditorProps> = ({ onSave }) =>
       setType('string');
     } catch (error) {
       console.error('Failed to add setting:', error);
+      alert("Failed to add setting. Check console."); // User feedback
     } finally {
       setIsLoading(false);
     }
@@ -81,6 +110,8 @@ export const NewSettingEditor: React.FC<NewSettingEditorProps> = ({ onSave }) =>
           <option value="string">String</option>
           <option value="number">Number</option>
           <option value="boolean">Boolean</option>
+          <option value="object">Object</option>
+          <option value="array">Array</option>
         </select>
 
         {type === 'boolean' ? (
@@ -92,6 +123,10 @@ export const NewSettingEditor: React.FC<NewSettingEditorProps> = ({ onSave }) =>
             <option value="true">True</option>
             <option value="false">False</option>
           </select>
+        ) : type === 'object' || type === 'array' ? (
+          <div className="text-xs text-muted-foreground italic p-1">
+            (Initial value will be empty {type === 'object' ? '{}' : '[]'})
+          </div>
         ) : (
           <input
             type={type === 'number' ? 'number' : 'text'}
