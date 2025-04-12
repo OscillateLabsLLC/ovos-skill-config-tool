@@ -370,7 +370,7 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
 
       <footer className="text-center p-4 text-sm text-muted-foreground">
         <p>
-          Made with 🤓 ❤️ by <a href="https://oscillatelabs.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Oscillate Labs</a> (Copyright 2025)
+          Made with 🤓 ❤️ by <a href="https://oscillatelabs.net" target="_blank" rel="noopener noreferrer" className="hover:underline">Oscillate Labs</a> (Copyright 2025)
         </p>
         <p className="mt-1">
           <a 
