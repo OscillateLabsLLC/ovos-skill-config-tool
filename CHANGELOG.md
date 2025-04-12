@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.5.2...v0.5.3) (2025-04-12)
+
+
+### Bug Fixes
+
+* make file available ([f9f93b5](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/f9f93b5faca833857d20ee20951d72e7ebed41c5))
+
 ## [0.5.2](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.5.1...v0.5.2) (2025-04-12)
 
 
