@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.4.0...v0.5.0) (2025-04-12)
+
+
+### Features
+
+* Containerize application with Docker and add GHCR publishing ([eb83966](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/eb83966c412aac7e02f7f047832f2de6f66bd6f5))
+* Containerize application with Docker and add GHCR publishing ([eb83966](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/eb83966c412aac7e02f7f047832f2de6f66bd6f5))
+* docker image ([8184723](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/8184723c29a1898e3fbc0c0119ba21a6bc968bfb))
+
 ## [0.4.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.3.0...v0.4.0) (2025-04-12)
 
 
