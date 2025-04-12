@@ -1,0 +1,9 @@
+{
+    "logo": {
+        "type": "image",
+        "src": "/logo.svg",
+        "alt": "OVOS Skill Config",
+        "width": 32,
+        "height": 32
+    }
+}

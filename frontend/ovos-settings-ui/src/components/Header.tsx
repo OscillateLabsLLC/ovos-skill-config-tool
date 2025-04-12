@@ -1,14 +1,25 @@
 import React from 'react';
 import { Moon, Sun, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { cn } from "@/lib/utils";
+import { SkillSetting } from "./SkillConfigurator";
+
+interface LogoConfig {
+  type: 'image' | 'text';
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  text?: string;
+}
 
 interface HeaderProps {
   isDark: boolean;
   onThemeToggle: () => void;
-  skills: any[]; // We'll properly type this later
+  skills: SkillSetting[];
+  logo: LogoConfig;
 }
 
-export const Header: React.FC<HeaderProps> = ({ isDark, onThemeToggle, skills }) => {
+export const Header: React.FC<HeaderProps> = ({ isDark, onThemeToggle, skills, logo }) => {
   const handleExport = () => {
     // Create a JSON file with formatted (pretty-printed) content
     const content = JSON.stringify(skills, null, 2);
@@ -28,44 +39,48 @@ export const Header: React.FC<HeaderProps> = ({ isDark, onThemeToggle, skills })
   };
 
   return (
-    <div className="border-b">
-      <div className="max-w-7xl mx-auto p-4 md:p-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-primary">Skill Settings</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Configure your voice assistant skills
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleExport}
-              className="h-9 w-9"
-              title="Export settings"
-            >
-              <Download className="h-4 w-4" />
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onThemeToggle}
-              className="h-9 w-9"
-              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {isDark ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+    <header className="border-b">
+      <div className="flex h-16 items-center px-4 md:px-6">
+        <div className="flex items-center gap-2">
+          {logo.type === 'image' ? (
+            <img
+              src={logo.src}
+              alt={logo.alt || 'Logo'}
+              width={logo.width || 32}
+              height={logo.height || 32}
+              className="h-8 w-auto"
+            />
+          ) : (
+            <span className="text-xl font-bold">{logo.text}</span>
+          )}
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            className={cn(
+              "rounded-md p-2 transition-colors",
+              "hover:bg-accent hover:text-accent-foreground"
+            )}
+            title="Export settings"
+          >
+            <Download className="h-5 w-5" />
+          </button>
+          <button
+            onClick={onThemeToggle}
+            className={cn(
+              "rounded-md p-2 transition-colors",
+              "hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            {isDark ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </button>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
