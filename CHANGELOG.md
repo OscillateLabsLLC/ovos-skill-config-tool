@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.3.0...v0.4.0) (2025-04-12)
+
+
+### Features
+
+* basic auth ([1a1212f](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/1a1212fd727e296353f68ed011f106a625751a7b))
+
 ## [0.3.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.2.0...v0.3.0) (2025-04-12)
 
 
