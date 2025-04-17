@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.6.0...v0.7.0) (2025-04-17)
+
+
+### Features
+
+* **ui:** add complex type support ([e037e76](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/e037e76d8a172a0e12abb484bac3037023c7b4d3))
+* **ui:** add complex type support ([c6c2200](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/c6c220033367647d02b82960c8df33eb71e6d6d3))
+
 ## [0.6.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.5.3...v0.6.0) (2025-04-12)
 
 
