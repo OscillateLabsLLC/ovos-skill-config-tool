@@ -5,13 +5,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Settings, Eye, EyeOff } from "lucide-react";
+import { Settings, Eye, EyeOff, Undo2 } from "lucide-react";
 import { siGithub } from "simple-icons";
 import { cn } from "@/lib/utils";
 import { Header } from "./Header";
 import SettingEditor from "./SettingEditor";
 import NewSettingEditor from "./NewSettingEditor";
 import { useAuth } from "@/lib/auth";
+import { produce } from 'immer';
 
 interface LogoConfig {
   type: 'image' | 'text';
@@ -57,6 +58,7 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hideEmptySkills, setHideEmptySkills] = useState(getHideEmptySkillsPreference);
+  const [previousSettings, setPreviousSettings] = useState<Record<string, Record<string, any> | null>>({}); // State for undo
 
   useEffect(() => {
     const stored = localStorage.getItem("theme-preference");
@@ -125,106 +127,205 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
   const toggleTheme = () => setIsDark((prev) => !prev);
   const toggleHideEmptySkills = () => setHideEmptySkills((prev) => !prev);
 
-  const handleDeleteSetting = async (skillId: string, keyToDelete: string) => {
+  // --- Path-Based Update Handlers using Immer --- 
+
+  const handleSaveSettingWithPath = async (skillId: string, path: (string | number)[], value: any) => {
+    console.log("Save Attempt:", { skillId, path, value });
+    let originalSettings: Record<string, any> | null = null; // To store pre-change state
+    let skillIndex = -1;
+
     try {
-      const authHeader = getAuthHeader();
-      // First get current settings
-      const response = await fetch(`/api/v1/skills/${skillId}`, {
-        headers: authHeader ? {
-          'Authorization': authHeader
-        } : undefined,
-        credentials: 'include'
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch current settings');
+      // Find original settings before producing the next state
+      const currentSkill = skills.find(s => s.id === skillId);
+      if (currentSkill) {
+          originalSettings = JSON.parse(JSON.stringify(currentSkill.settings)); // Deep copy
       }
-      const currentData = await response.json();
+
+      const nextSkills = produce(skills, draftSkills => {
+        skillIndex = draftSkills.findIndex(s => s.id === skillId);
+        if (skillIndex === -1) {
+          console.error("Skill not found for saving:", skillId);
+          throw new Error("Skill not found");
+        }
+
+        let currentLevel: any = draftSkills[skillIndex].settings;
+        for (let i = 0; i < path.length - 1; i++) {
+          const segment = path[i];
+          if (currentLevel[segment] === undefined || currentLevel[segment] === null) {
+             console.error("Invalid path segment during save:", segment, "in path", path);
+             throw new Error("Invalid setting path");
+          }
+          currentLevel = currentLevel[segment];
+        }
+
+        const finalKey = path[path.length - 1];
+        console.log(`Assigning to draft[${skillIndex}].settings[${finalKey}]:`, value, typeof value);
+        currentLevel[finalKey] = value;
+      });
+
+      // Record previous state *before* setting the new state
+      if (originalSettings) {
+          setPreviousSettings(prev => ({ ...prev, [skillId]: originalSettings }));
+      }
+
+      // Optimistically update local state
+      setSkills(nextSkills);
       
-      // Create new settings object without the key to delete
-      const newSettings = Object.fromEntries(
-        Object.entries(currentData.settings)
-          .filter(([key]) => key !== keyToDelete)
-      );
-
-      // Replace all settings with the new object
-      const deleteResponse = await fetch(`/api/v1/skills/${skillId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(authHeader ? { 'Authorization': authHeader } : {})
-        },
-        credentials: 'include',
-        body: JSON.stringify(newSettings),
-      });
-
-      if (!deleteResponse.ok) {
-        throw new Error('Failed to delete setting');
+      if (skillIndex === -1 || !nextSkills[skillIndex]) {
+          throw new Error("Skill not found in updated state.");
       }
+      const finalSettingsToSend = nextSkills[skillIndex].settings;
 
-      const result = await deleteResponse.json();
-
-      // Update local state using the same filtering logic
-      setSkills(currentSkills => 
-        currentSkills.map(skill => {
-          if (skill.id === skillId) {
-            return {
-              ...skill,
-              settings: Object.fromEntries(
-                Object.entries(result.settings)
-                  .filter(([key]) => key !== '__mycroft_skill_firstrun')
-                  .sort(([a], [b]) => a.localeCompare(b))
-              )
-            };
-          }
-          return skill;
-        })
-      );
-    } catch (error) {
-      console.error('Error deleting setting:', error);
-      throw error;
-    }
-  };
-  const handleSaveSetting = async (skillId: string, key: string, value: any) => {
-    try {
+      // Persist changes to the backend
       const authHeader = getAuthHeader();
-      const response = await fetch(`/api/v1/skills/${skillId}/merge`, {
+      const response = await fetch(`/api/v1/skills/${skillId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(authHeader ? { 'Authorization': authHeader } : {})
         },
         credentials: 'include',
-        body: JSON.stringify({
-          [key]: value
-        }),
+        body: JSON.stringify(finalSettingsToSend),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save setting');
+        const errorBody = await response.text();
+        throw new Error(`Failed to save settings to API: ${response.status} ${errorBody}`);
       }
-
-      const result = await response.json();
-
-      // Update local state using the same filtering logic as initial load
-      setSkills(currentSkills => 
-        currentSkills.map(skill => {
-          if (skill.id === skillId) {
-            return {
-              ...skill,
-              settings: Object.fromEntries(
-                Object.entries(result.settings)
-                  .filter(([key]) => key !== '__mycroft_skill_firstrun')
-                  .sort(([a], [b]) => a.localeCompare(b))
-              )
-            };
-          }
-          return skill;
-        })
-      );
+      
     } catch (error) {
       console.error('Error saving setting:', error);
-      throw error;
+      setError(error instanceof Error ? error.message : "Save failed");
     }
+  };
+
+  const handleDeleteSettingWithPath = async (skillId: string, path: (string | number)[]) => {
+    console.log("Delete Attempt:", { skillId, path });
+    let originalSettings: Record<string, any> | null = null; // To store pre-change state
+    let skillIndex = -1;
+    
+    if (path.length === 0) {
+       console.error("Cannot delete with empty path");
+       setError("Cannot delete root setting");
+       return;
+    }
+
+    try {
+      // Find original settings before producing the next state
+      const currentSkill = skills.find(s => s.id === skillId);
+      if (currentSkill) {
+          originalSettings = JSON.parse(JSON.stringify(currentSkill.settings)); // Deep copy
+      }
+
+      const nextSkills = produce(skills, draftSkills => {
+        skillIndex = draftSkills.findIndex(s => s.id === skillId);
+        if (skillIndex === -1) {
+          console.error("Skill not found for deleting:", skillId);
+          throw new Error("Skill not found");
+        }
+        
+        let parentLevel: any = draftSkills[skillIndex].settings;
+        for (let i = 0; i < path.length - 1; i++) {
+           const segment = path[i];
+           if (parentLevel[segment] === undefined || parentLevel[segment] === null) {
+              console.error("Invalid path segment during delete:", segment, "in path", path);
+              throw new Error("Invalid setting path");
+           }
+           parentLevel = parentLevel[segment];
+        }
+
+        const finalKeyOrIndex = path[path.length - 1];
+        if (Array.isArray(parentLevel) && typeof finalKeyOrIndex === 'number') {
+          parentLevel.splice(finalKeyOrIndex, 1);
+        } else if (typeof parentLevel === 'object' && parentLevel !== null && typeof finalKeyOrIndex === 'string') {
+          delete parentLevel[finalKeyOrIndex];
+        } else {
+           console.error("Invalid target for delete:", { parentLevel, finalKeyOrIndex });
+           throw new Error("Cannot delete from target");
+        }
+      });
+
+      // Record previous state *before* setting the new state
+      if (originalSettings) {
+          setPreviousSettings(prev => ({ ...prev, [skillId]: originalSettings }));
+      }
+
+      // Optimistically update local state
+      setSkills(nextSkills);
+      
+      if (skillIndex === -1 || !nextSkills[skillIndex]) {
+          throw new Error("Skill not found in updated state after delete.");
+      }
+      const finalSettingsToSend = nextSkills[skillIndex].settings;
+
+      // Persist changes to the backend
+      const authHeader = getAuthHeader();
+      const response = await fetch(`/api/v1/skills/${skillId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authHeader ? { 'Authorization': authHeader } : {})
+        },
+        credentials: 'include',
+        body: JSON.stringify(finalSettingsToSend),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Failed to save settings to API after delete: ${response.status} ${errorBody}`);
+      }
+
+    } catch (error) {
+      console.error('Error deleting setting:', error);
+      setError(error instanceof Error ? error.message : "Delete failed");
+    }
+  };
+
+  // --- Undo Handler --- 
+  const handleUndoChange = async (skillId: string) => {
+      const settingsToRestore = previousSettings[skillId];
+      if (!settingsToRestore) return; // No history for this skill
+      
+      console.log("Undo Attempt:", { skillId, settingsToRestore });
+      
+      // Optimistically update local state with restored settings
+      const nextSkills = produce(skills, draftSkills => {
+          const skillIndex = draftSkills.findIndex(s => s.id === skillId);
+          if (skillIndex !== -1) {
+              draftSkills[skillIndex].settings = settingsToRestore;
+          }
+      });
+      setSkills(nextSkills);
+      
+      // Clear the stored previous state for this skill
+      setPreviousSettings(prev => ({ ...prev, [skillId]: null }));
+      
+      // Persist the restored state to the backend
+      try {
+          const authHeader = getAuthHeader();
+          const response = await fetch(`/api/v1/skills/${skillId}`, { // POST replaces entire settings object
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(authHeader ? { 'Authorization': authHeader } : {})
+            },
+            credentials: 'include',
+            body: JSON.stringify(settingsToRestore),
+          });
+          
+          if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(`Failed to save undone settings to API: ${response.status} ${errorBody}`);
+          }
+          console.log("Undo successful and saved to API for", skillId);
+      } catch(error) {
+          console.error('Error saving undone state:', error);
+          setError(error instanceof Error ? error.message : "Undo save failed");
+          // Consider: Should we restore the previousSettings entry if API fails?
+          // setPreviousSettings(prev => ({ ...prev, [skillId]: settingsToRestore }));
+          // Consider: Should we revert the optimistic state update?
+          // fetchSkills(); // Or revert locally?
+      }
   };
 
   if (loading) {
@@ -335,30 +436,44 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
                   </AccordionTrigger>
 
                   <AccordionContent className="px-4 pb-4">
-                    <div className="space-y-4 pt-2">
-                      {Object.entries(skill.settings).map(([key, value]) => (
-                        <div
-                          key={key}
-                          className="border-b border-border pb-3 last:border-0"
+                    <div className="flex justify-end mb-2">
+                       <button
+                          onClick={() => handleUndoChange(skill.id)}
+                          disabled={!previousSettings[skill.id]}
+                          className={cn(
+                              "flex items-center gap-1 text-xs px-2 py-1 rounded",
+                              "bg-amber-600/10 text-amber-700 dark:bg-amber-400/10 dark:text-amber-400",
+                              "hover:bg-amber-600/20 dark:hover:bg-amber-400/20",
+                              "disabled:opacity-50 disabled:cursor-not-allowed"
+                          )}
+                          title="Undo Single Last Change (per skill)"
                         >
-                          <SettingEditor
-                            settingKey={key}
-                            value={value}
-                            onSave={async (key, newValue) => {
-                              await handleSaveSetting(skill.id, key, newValue);
-                            }}
-                            onDelete={async (key) => {
-                              await handleDeleteSetting(skill.id, key);
-                            }}
-                          />
-                        </div>
-                      ))}
-                      <div className="pt-2">
-                        <NewSettingEditor
-                          onSave={async (key, value) => {
-                            await handleSaveSetting(skill.id, key, value);
-                          }}
-                        />
+                          <Undo2 size={14} /> Undo Change
+                        </button>
+                    </div>
+                    <div className="space-y-4 pt-2 border-t">
+                      {Object.entries(skill.settings).map(([key, value]) => {
+                        const initialPath = [key];
+                        return (
+                          <div
+                            key={key}
+                            className="border-b border-border pb-3 last:border-0"
+                          >
+                            <SettingEditor
+                              path={initialPath}
+                              value={value}
+                              onSave={(path, val) => handleSaveSettingWithPath(skill.id, path, val)}
+                              onDelete={(path) => handleDeleteSettingWithPath(skill.id, path)}
+                            />
+                          </div>
+                        );
+                      })}
+                      <div className="pt-2 border-t">
+                         <NewSettingEditor 
+                           onSave={async (key, value) => { 
+                             await handleSaveSettingWithPath(skill.id, [key], value);
+                           }}
+                         />
                       </div>
                     </div>
                   </AccordionContent>

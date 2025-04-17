@@ -209,6 +209,34 @@ services:
     user: $(id -u):$(id -g)
 ```
 
+## Using the Settings Editor
+
+Once the OVOS Skill Config Tool is running and you've logged in, you'll see a list of installed skills whose configuration can be managed.
+
+- **Skill Sections:** Each skill with manageable settings appears in its own collapsible section (accordion). Click the skill name to expand or collapse its settings.
+- **Viewing Settings:**
+  - Simple settings (strings, numbers, booleans) are displayed directly below their name.
+  - Complex settings (objects and arrays) are displayed hierarchically. Object fields show their key (bold) and value (muted color). Array items show their index in blue brackets (e.g., `[0]`, `[1]`) followed by their value. You can visually trace the structure through the indentation and connecting lines.
+- **Editing Values:**
+  - To edit a simple setting (string, number, boolean), click the pencil icon (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>) next to it. An appropriate input field will appear.
+  - Make your changes and click the checkmark icon (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>) to save, or the X icon (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>) to cancel.
+  - You can edit primitive values even if they are nested inside objects or arrays.
+- **Adding Fields/Items to Objects/Arrays:**
+  - To add a new entry to an existing object or array, click the green plus icon (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>) next to the object's key or array's index.
+  - An inline form will appear below the existing entries.
+  - If adding to an object, enter the **New field name**.
+  - Select the **Type** of the new value (String, Number, Boolean, Object, Array).
+  - Enter the **Value** (unless you chose Object or Array, which start empty).
+  - Click the small checkmark icon (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>) within the form to save the new entry, or the X icon (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>) to cancel.
+- **Deleting Fields/Items:**
+  - To delete any setting (top-level or nested), click the red trash icon (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>) next to it. You will be asked for confirmation.
+- **Adding New Top-Level Settings:**
+  - At the bottom of each skill's section, there is an "Add Setting" button (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>). Click this to reveal a form similar to the inline add form.
+  - Enter the Setting name, select the Type, enter the Value, and click the checkmark icon (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>) to add the new setting to the skill.
+- **Undo:**
+  - If you make a change (save or delete) to a skill's settings, an "Undo Change" button (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"></path></svg>) will appear at the top right of that skill's section.
+  - Clicking this button will revert the settings for that specific skill to the state _before_ the last change was made. It only undoes the single most recent change for that skill.
+
 ## Developer Installation
 
 1. Clone the repository:
