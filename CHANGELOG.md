@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.1](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.7.0...v0.7.1) (2026-01-12)
+
+
+### Bug Fixes
+
+* address multiple vulnerabilities ([e9178dd](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/e9178dd5976b38679812c125828ea3071d2839b0))
+* address multiple vulnerabilities ([315634f](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/315634f70dece57308a7dde79eeaeac657814f60))
+
 ## [0.7.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.6.0...v0.7.0) (2025-04-17)
 
 
