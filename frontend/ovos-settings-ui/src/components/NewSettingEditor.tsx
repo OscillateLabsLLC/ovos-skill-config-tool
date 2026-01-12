@@ -3,7 +3,7 @@ import { Plus, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NewSettingEditorProps {
-  onSave: (key: string, value: any) => Promise<void>;
+  onSave: (key: string, value: unknown) => Promise<void>;
 }
 
 export const NewSettingEditor: React.FC<NewSettingEditorProps> = ({ onSave }) => {
@@ -31,7 +31,7 @@ export const NewSettingEditor: React.FC<NewSettingEditorProps> = ({ onSave }) =>
     
     try {
       // Initialize processedValue based on type
-      let processedValue: any;
+      let processedValue: unknown;
       switch (type) {
         case 'number':
           processedValue = Number(value);
@@ -104,7 +104,7 @@ export const NewSettingEditor: React.FC<NewSettingEditorProps> = ({ onSave }) =>
         
         <select
           value={type}
-          onChange={(e) => setType(e.target.value as any)}
+          onChange={(e) => setType(e.target.value as 'string' | 'number' | 'boolean' | 'object' | 'array')}
           className="w-full rounded border bg-background p-1 text-sm"
         >
           <option value="string">String</option>

@@ -3,10 +3,10 @@ import { Check, X, Pencil, Trash2, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SettingEditorProps {
-  value: any;
+  value: unknown;
   path: (string | number)[];
   parentType?: 'array' | 'object';
-  onSave: (path: (string | number)[], value: any) => Promise<void>;
+  onSave: (path: (string | number)[], value: unknown) => Promise<void>;
   onDelete: (path: (string | number)[]) => Promise<void>;
 }
 
@@ -32,7 +32,7 @@ export const SettingEditor: React.FC<SettingEditorProps> = ({
 
   const currentKeyOrIndex = path[path.length - 1];
   
-  const getInputType = (val: any) => {
+  const getInputType = (val: unknown) => {
     if (typeof val === 'boolean') return 'boolean';
     if (typeof val === 'number') return 'number';
     if (Array.isArray(val)) return 'array';
@@ -73,7 +73,7 @@ export const SettingEditor: React.FC<SettingEditorProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      let processedValue: any;
+      let processedValue: unknown;
       if (type === 'number') {
         processedValue = Number(value);
         if (isNaN(processedValue)) {
@@ -122,7 +122,7 @@ export const SettingEditor: React.FC<SettingEditorProps> = ({
   const handleSaveNewEntry = async () => {
       const newKey = newEntryKey.trim();
       // For arrays, the 'key' is the next index
-      const newPathSegment = type === 'object' ? newKey : (initialValue as any[]).length;
+      const newPathSegment = type === 'object' ? newKey : (initialValue as unknown[]).length;
       
       if (type === 'object' && !newKey) {
           alert("New field key cannot be empty.");
@@ -132,7 +132,7 @@ export const SettingEditor: React.FC<SettingEditorProps> = ({
       
       setIsSavingNewEntry(true);
       try {
-          let processedValue: any;
+          let processedValue: unknown;
           switch (newEntryType) {
              case 'number':
                 processedValue = Number(newEntryValue);
@@ -177,7 +177,7 @@ export const SettingEditor: React.FC<SettingEditorProps> = ({
               )}
               <select
                  value={newEntryType}
-                 onChange={(e) => setNewEntryType(e.target.value as any)}
+                 onChange={(e) => setNewEntryType(e.target.value as 'string' | 'number' | 'boolean' | 'object' | 'array')}
                  className="w-full rounded border bg-background p-1 text-xs"
                >
                   <option value="string">String</option>
@@ -233,7 +233,7 @@ export const SettingEditor: React.FC<SettingEditorProps> = ({
     if (type === 'object') {
       return (
         <div className="space-y-1 ml-4 border-l border-border/50">
-          {Object.entries(initialValue).map(([key, val]) => {
+          {Object.entries(initialValue as Record<string, unknown>).map(([key, val]) => {
             const childPath = [...path, key];
             return (
               <SettingEditor 
@@ -257,7 +257,7 @@ export const SettingEditor: React.FC<SettingEditorProps> = ({
     if (type === 'array') {
       return (
         <div className="space-y-1 ml-4 border-l border-border/50">
-          {initialValue.map((val: any, index: number) => {
+          {(initialValue as unknown[]).map((val: unknown, index: number) => {
             const childPath = [...path, index];
             return (
               <SettingEditor 

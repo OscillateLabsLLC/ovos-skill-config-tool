@@ -25,7 +25,7 @@ interface LogoConfig {
 
 export interface SkillSetting {
   id: string;
-  settings: Record<string, any>;
+  settings: Record<string, unknown>;
 }
 
 const getThemePreference = () => {
@@ -58,7 +58,7 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hideEmptySkills, setHideEmptySkills] = useState(getHideEmptySkillsPreference);
-  const [previousSettings, setPreviousSettings] = useState<Record<string, Record<string, any> | null>>({}); // State for undo
+  const [previousSettings, setPreviousSettings] = useState<Record<string, Record<string, unknown> | null>>({}); // State for undo
 
   useEffect(() => {
     const stored = localStorage.getItem("theme-preference");
@@ -103,8 +103,8 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
             ...skill,
             settings: Object.fromEntries(
               Object.entries(skill.settings)
-                .filter(([key]: [string, any]) => key !== "__mycroft_skill_firstrun")
-                .sort(([a]: [string, any], [b]: [string, any]) => a.localeCompare(b))
+                .filter(([key]: [string, unknown]) => key !== "__mycroft_skill_firstrun")
+                .sort(([a]: [string, unknown], [b]: [string, unknown]) => a.localeCompare(b))
             ),
           }))
           .sort((a: SkillSetting, b: SkillSetting) =>
@@ -129,9 +129,9 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
 
   // --- Path-Based Update Handlers using Immer --- 
 
-  const handleSaveSettingWithPath = async (skillId: string, path: (string | number)[], value: any) => {
+  const handleSaveSettingWithPath = async (skillId: string, path: (string | number)[], value: unknown) => {
     console.log("Save Attempt:", { skillId, path, value });
-    let originalSettings: Record<string, any> | null = null; // To store pre-change state
+    let originalSettings: Record<string, unknown> | null = null; // To store pre-change state
     let skillIndex = -1;
 
     try {
@@ -147,7 +147,8 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
           console.error("Skill not found for saving:", skillId);
           throw new Error("Skill not found");
         }
-
+        
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let currentLevel: any = draftSkills[skillIndex].settings;
         for (let i = 0; i < path.length - 1; i++) {
           const segment = path[i];
@@ -201,7 +202,7 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
 
   const handleDeleteSettingWithPath = async (skillId: string, path: (string | number)[]) => {
     console.log("Delete Attempt:", { skillId, path });
-    let originalSettings: Record<string, any> | null = null; // To store pre-change state
+    let originalSettings: Record<string, unknown> | null = null; // To store pre-change state
     let skillIndex = -1;
     
     if (path.length === 0) {
@@ -224,6 +225,7 @@ export const SkillConfigurator: React.FC<SkillConfiguratorProps> = ({ logo }) =>
           throw new Error("Skill not found");
         }
         
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let parentLevel: any = draftSkills[skillIndex].settings;
         for (let i = 0; i < path.length - 1; i++) {
            const segment = path[i];
