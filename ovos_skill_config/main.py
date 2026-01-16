@@ -43,6 +43,12 @@ app.add_middleware(
 )
 
 
+# No auth - for healthchecks
+@app.get("/status")
+async def status(request: Request):
+    return {"status": "ok"}
+
+
 @app.post("/api/v1/auth/login")
 async def login(request: Request):
     auth_header = request.headers.get("Authorization")
