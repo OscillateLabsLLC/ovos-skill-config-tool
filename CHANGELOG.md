@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.7.1...v0.8.0) (2026-02-17)
+
+
+### Features
+
+* bring repo up to standard ([616b63b](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/616b63b6ec72cf5311ee6396e689cff61031fa12))
+
 ## [0.7.1](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.7.0...v0.7.1) (2026-01-12)
 
 
