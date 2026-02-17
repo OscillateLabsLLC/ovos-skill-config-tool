@@ -7,13 +7,13 @@ build-fe:
   npx vite build && \
   cp -R dist/* ../../ovos_skill_config/static
 run:
-  python ovos_skill_config/main.py
+  uv run python -m ovos_skill_config.main
 test:
-  pytest
+  uv run pytest
 fmt:
-  ruff format .
+  uv run ruff format .
 lint:
-  ruff check ovos_skill_config/*.py --fix
+  uv run ruff check . --fix
 
 docker-build:
   echo "Building Docker image as {{image_name}} ..."

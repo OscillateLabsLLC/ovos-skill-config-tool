@@ -188,12 +188,10 @@ async def list_skills(username: str = Depends(verify_credentials)) -> List[Dict]
 async def get_skill_settings(
     skill_id: str, username: str = Depends(verify_credentials)
 ) -> Dict:
-    """Get settings for a specific skill."""
+    """Get settings for a specific skill. Creates empty settings if skill doesn't exist."""
     try:
         skill_settings = SkillSettings(skill_id)
         return {"id": skill_id, "settings": skill_settings.settings}
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Skill not found") from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -202,15 +200,11 @@ async def get_skill_settings(
 async def get_skill_setting(
     skill_id: str, key: str, username: str = Depends(verify_credentials)
 ) -> Dict:
-    """Get a specific setting value for a skill."""
+    """Get a specific setting value for a skill. Creates empty settings if skill doesn't exist."""
     try:
         skill_settings = SkillSettings(skill_id)
         value = skill_settings.get_setting(key)
         return {"id": skill_id, "key": key, "value": value}
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Skill not found") from exc
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -219,15 +213,11 @@ async def get_skill_setting(
 async def merge_skill_settings(
     skill_id: str, settings: Dict, username: str = Depends(verify_credentials)
 ) -> Dict:
-    """Merge new settings with existing ones."""
+    """Merge new settings with existing ones. Creates skill if it doesn't exist."""
     try:
         skill_settings = SkillSettings(skill_id)
         merged = skill_settings.merge_settings(settings)
         return {"id": skill_id, "settings": merged}
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Skill not found") from exc
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -236,15 +226,11 @@ async def merge_skill_settings(
 async def replace_skill_settings(
     skill_id: str, settings: Dict, username: str = Depends(verify_credentials)
 ) -> Dict:
-    """Replace all settings for a skill."""
+    """Replace all settings for a skill. Creates skill if it doesn't exist."""
     try:
         skill_settings = SkillSettings(skill_id)
         replaced = skill_settings.replace_settings(settings)
         return {"id": skill_id, "settings": replaced}
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Skill not found") from exc
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 

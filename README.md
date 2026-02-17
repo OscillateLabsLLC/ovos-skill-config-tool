@@ -278,6 +278,23 @@ just fmt
 just lint
 ```
 
+### Testing
+
+We use pytest with coverage reporting:
+
+```bash
+# Run all tests
+uv run pytest
+
+# Run with coverage report
+uv run pytest --cov=ovos_skill_config --cov-report=term-missing
+
+# Run specific test
+uv run pytest tests/test_main.py::TestAPI::test_list_skills_empty_dir
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on development and testing guidelines.
+
 ## Contributing
 
 1. Fork the repository
