@@ -75,10 +75,11 @@ export const SettingEditor: React.FC<SettingEditorProps> = ({
     try {
       let processedValue: unknown;
       if (type === 'number') {
-        processedValue = Number(value);
-        if (isNaN(processedValue)) {
+        const parsed = Number(value);
+        if (isNaN(parsed)) {
           throw new Error("Invalid number input");
         }
+        processedValue = parsed;
       } else if (type === 'boolean') {
         processedValue = value === true;
       } else {
@@ -134,10 +135,12 @@ export const SettingEditor: React.FC<SettingEditorProps> = ({
       try {
           let processedValue: unknown;
           switch (newEntryType) {
-             case 'number':
-                processedValue = Number(newEntryValue);
-                if (isNaN(processedValue)) throw new Error("Invalid number");
+             case 'number': {
+                const parsed = Number(newEntryValue);
+                if (isNaN(parsed)) throw new Error("Invalid number");
+                processedValue = parsed;
                 break;
+             }
              case 'boolean':
                 processedValue = newEntryValue === 'true';
                 break;
