@@ -33,14 +33,16 @@ export const NewSettingEditor: React.FC<NewSettingEditorProps> = ({ onSave }) =>
       // Initialize processedValue based on type
       let processedValue: unknown;
       switch (type) {
-        case 'number':
-          processedValue = Number(value);
-          if (isNaN(processedValue)) {
+        case 'number': {
+          const parsed = Number(value);
+          if (isNaN(parsed)) {
               alert("Invalid number input."); // Simple validation feedback
               setIsLoading(false);
               return;
           }
+          processedValue = parsed;
           break;
+        }
         case 'boolean':
           processedValue = value === 'true';
           break;
