@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.1](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.8.0...v0.8.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* **deps:** npm audit fix clears 5 high frontend Dependabot alerts ([6d29ce8](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/6d29ce8244b15d29951db32bef803bd8ba0006bd))
+* **deps:** npm audit fix clears 5 high frontend Dependabot alerts ([3451ae4](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/3451ae4bb4c3d13a59af163c24b5f053b3fcb356))
+
 ## [0.8.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.7.1...v0.8.0) (2026-02-17)
 
 
