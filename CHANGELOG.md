@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.8.1...v0.8.2) (2026-04-24)
+
+
+### Documentation
+
+* Update README with virtual environment instructions ([d46d8f1](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/d46d8f1f5dae9f68c374c90727fd91560e63f60d))
+
 ## [0.8.1](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.8.0...v0.8.1) (2026-04-23)
 
 
