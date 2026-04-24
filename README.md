@@ -31,10 +31,14 @@ You can run the OVOS Skill Config Tool either directly via Pip or using the offi
 
 #### Installation
 
-Ensure you have Python 3.9+ and Pip installed. It's recommended to use a virtual environment.
+Ensure you have Python 3.9+ and Pip installed. It's recommended to use a virtual environment. If you installed 
+ovos using the official ovos-installer method, you do not need to create a virtual environment again, but you
+will be using the ovos one.
 
 ```bash
 # Create and activate a virtual environment (optional but recommended)
+# You can skip these two lines if you installed your system using the
+# official ovos-installer method.
 python -m venv .venv
 source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
 
