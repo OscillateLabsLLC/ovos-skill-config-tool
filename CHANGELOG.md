@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.8.2...v0.8.3) (2026-07-21)
+
+
+### Bug Fixes
+
+* **deps:** bump h11 to 0.16.0, fixes malformed chunked-encoding CVE ([#37](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/issues/37)) ([4831b0d](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/4831b0d144fcf309487b0339ec736811be831f59))
+
 ## [0.8.2](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.8.1...v0.8.2) (2026-04-24)
 
 
