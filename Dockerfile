@@ -93,7 +93,6 @@ ENV OVOS_CONFIG_STATIC_DIR=/app/static
 EXPOSE 8000
 
 HEALTHCHECK --interval=60s --timeout=10s --retries=3 --start-period=60s \
-    CMD curl http://127.0.0.1:8000/status || kill 1
-    
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/status', timeout=5)" || kill 1
 # Command to run the application using the installed script
 CMD ["ovos-skill-config-tool"]
