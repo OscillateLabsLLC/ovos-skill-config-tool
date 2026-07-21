@@ -45,7 +45,7 @@ app.add_middleware(
 
 # No auth - for healthchecks
 @app.get("/status")
-async def status(request: Request):
+async def healthcheck_status(request: Request):
     return {"status": "ok"}
 
 
