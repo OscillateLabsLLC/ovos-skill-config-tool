@@ -21,7 +21,12 @@ keywords = [
 dynamic = ["version"]
 urls = { Homepage = "https://github.com/OscillateLabsLLC/ovos-skill-config-tool" }
 scripts = { "ovos-skill-config-tool" = "ovos_skill_config.main:main" }
-dependencies = ["fastapi>=0.115.6", "json-database>=0.7.0", "uvicorn>=0.34.0"]
+dependencies = [
+    "fastapi>=0.115.6",
+    "jinja2>=3.1.6",
+    "json-database>=0.7.0",
+    "uvicorn>=0.34.0",
+]
 
 [dependency-groups]
 dev = [
@@ -49,7 +54,7 @@ version = { attr = "ovos_skill_config.version.__version__" }
 include = ["ovos_skill_config*"]
 
 [tool.setuptools.package-data]
-ovos_skill_config = ["static/**/*"]
+ovos_skill_config = ["static/**/*", "templates/**/*"]
 
 [tool.pytest.ini_options]
 addopts = "--cov=ovos_skill_config --cov-report=term-missing"

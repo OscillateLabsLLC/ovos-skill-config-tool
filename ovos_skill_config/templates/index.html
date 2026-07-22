@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% import "partials/_macros.html" as ui %}
+{% block content %}
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      {% if logo.type == "image" %}
+      <img src="{{ logo.src }}" alt="{{ logo.alt or 'Logo' }}" height="{{ logo.height or 32 }}" class="brand-logo" />
+      {% else %}
+      <span class="brand-text">{{ logo.text or "OVOS" }}</span>
+      {% endif %}
+    </div>
+    <div class="header-actions">
+      <span class="user-label">User: {{ username }}</span>
+      <a class="icon-btn" href="/export" title="Export settings">{{ ui.icon("download", 20) }}</a>
+      <button type="button" class="icon-btn theme-toggle" data-action="theme" title="Toggle theme">
+        <span class="icon-sun">{{ ui.icon("sun", 20) }}</span>
+        <span class="icon-moon">{{ ui.icon("moon", 20) }}</span>
+      </button>
+      <a class="icon-btn" href="/logout" title="Logout">{{ ui.icon("logout", 20) }}</a>
+    </div>
+  </div>
+</header>
+
+<main class="page-main">
+  <div class="controls-row">
+    <h2>Skill Settings</h2>
+    <div class="controls-actions">
+      <a class="pill-btn" href="https://github.com/OscillateLabsLLC/ovos-skill-config-tool/issues" target="_blank" rel="noopener noreferrer">{{ ui.icon("github", 16) }} Report Issue</a>
+      <button type="button" class="pill-btn" data-action="hide-empty">
+        <span class="when-visible">{{ ui.icon("eye", 16) }} Hide Empty Skills</span>
+        <span class="when-hidden">{{ ui.icon("eye-off", 16) }} Show Empty Skills</span>
+      </button>
+    </div>
+  </div>
+  <div class="skill-list">
+    {% for skill in skills %}{% include "partials/skill_card.html" %}{% endfor %}
+  </div>
+</main>
+
+<footer class="site-footer">
+  <p>Made with 🤓 ❤️ by <a href="https://oscillatelabs.net" target="_blank" rel="noopener noreferrer">Oscillate Labs</a> (Copyright 2025)</p>
+  <p><a href="https://github.com/OscillateLabsLLC/ovos-skill-config-tool/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">View License (Apache 2.0)</a></p>
+</footer>
+{% endblock %}

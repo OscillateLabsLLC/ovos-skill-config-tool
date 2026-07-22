@@ -79,6 +79,26 @@ async def login(request: Request):
     return {"authenticated": True, "username": username}
 
 
+def sort_keys_enabled() -> bool:
+    """Whether top-level settings keys should be sorted (issue #28).
+
+    Controlled by the OVOS_CONFIG_SORT_KEYS env var, read at request time.
+    Default: off (file order preserved).
+    """
+    return os.getenv("OVOS_CONFIG_SORT_KEYS", "").strip().lower() in (
+        "true",
+        "1",
+        "yes",
+    )
+
+
+def maybe_sort_settings(settings: Dict) -> Dict:
+    """Sort top-level settings keys alphabetically when enabled."""
+    if sort_keys_enabled():
+        return {key: settings[key] for key in sorted(settings)}
+    return settings
+
+
 @lru_cache()
 def get_config_dir() -> Path:
     """Get the XDG config directory for skills."""
@@ -146,7 +166,9 @@ class SkillSettings:
         """Replace all settings with new values."""
         try:
             self.db.clear()
-            self.db.merge(new_settings)
+            # skip_empty=False: a faithful replace must keep empty values
+            # ({}, [], "") instead of silently dropping them
+            self.db.merge(new_settings, skip_empty=False)
             self.db.store()
             return dict(self.db)
         except Exception as e:
@@ -164,9 +186,8 @@ class SkillSettings:
             raise ValueError(f"Error getting settings: {str(e)}") from e
 
 
-@app.get("/api/v1/skills")
-async def list_skills(username: str = Depends(verify_credentials)) -> List[Dict]:
-    """List all available skills with their settings."""
+def load_all_skills() -> List[Dict]:
+    """Load every skill directory that contains a settings.json file."""
     skills_dir = get_config_dir()
     if not skills_dir.exists():
         return []
@@ -190,6 +211,15 @@ async def list_skills(username: str = Depends(verify_credentials)) -> List[Dict]
     return skills
 
 
+@app.get("/api/v1/skills")
+async def list_skills(username: str = Depends(verify_credentials)) -> List[Dict]:
+    """List all available skills with their settings."""
+    return [
+        {"id": skill["id"], "settings": maybe_sort_settings(skill["settings"])}
+        for skill in load_all_skills()
+    ]
+
+
 @app.get("/api/v1/skills/{skill_id}")
 async def get_skill_settings(
     skill_id: str, username: str = Depends(verify_credentials)
@@ -197,7 +227,10 @@ async def get_skill_settings(
     """Get settings for a specific skill. Creates empty settings if skill doesn't exist."""
     try:
         skill_settings = SkillSettings(skill_id)
-        return {"id": skill_id, "settings": skill_settings.settings}
+        return {
+            "id": skill_id,
+            "settings": maybe_sort_settings(skill_settings.settings),
+        }
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -241,6 +274,13 @@ async def replace_skill_settings(
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
+# HTML routes (server-rendered UI) must be registered before the static mount.
+# Imported here (not at the top) because ovos_skill_config.web imports back into
+# this module for SkillSettings and friends.
+from ovos_skill_config.web import router as web_router  # noqa: E402
+
+app.include_router(web_router)
+
 package_dir = Path(__file__).parent
 # Define the default path relative to the package
 default_static_dir = package_dir / "static"
@@ -249,9 +289,11 @@ static_dir_path = os.getenv("OVOS_CONFIG_STATIC_DIR", str(default_static_dir))
 # Ensure it's a Path object for consistency if needed, although StaticFiles accepts string
 static_dir = Path(static_dir_path)
 
-# Mount the static files
-# Convert Path back to string if StaticFiles requires it (though usually not needed)
-app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
+# Mount the static files LAST so real routes ("/", "/login", API, ...) win.
+# html=False: "/" is now a server-rendered route, not a SPA index.html.
+# Root-level files like /logo.svg and /config.json remain reachable (Docker
+# deployments volume-mount over them).
+app.mount("/", StaticFiles(directory=str(static_dir), html=False), name="static")
 
 
 def main():

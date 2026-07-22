@@ -315,10 +315,13 @@ class TestGetConfigDir:
         get_config_dir.cache_clear()
 
         with patch.dict(
-            "os.environ", {"XDG_CONFIG_HOME": "", "OVOS_CONFIG_BASE_FOLDER": ""}, clear=False
+            "os.environ",
+            {"XDG_CONFIG_HOME": "", "OVOS_CONFIG_BASE_FOLDER": ""},
+            clear=False,
         ):
             # Remove env vars if set
             import os
+
             xdg = os.environ.pop("XDG_CONFIG_HOME", None)
             base = os.environ.pop("OVOS_CONFIG_BASE_FOLDER", None)
             get_config_dir.cache_clear()
@@ -342,6 +345,7 @@ class TestGetConfigDir:
 
         with patch.dict("os.environ", {"XDG_CONFIG_HOME": str(tmp_path)}, clear=False):
             import os
+
             os.environ.pop("OVOS_CONFIG_BASE_FOLDER", None)
             get_config_dir.cache_clear()
 

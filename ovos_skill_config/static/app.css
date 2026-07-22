@@ -1,0 +1,602 @@
+/* OVOS/Neon Skill Configuration — hand-written stylesheet.
+   Color tokens carried over from the previous React UI (shadcn HSL palette). */
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+}
+
+* {
+  box-sizing: border-box;
+  border-color: hsl(var(--border));
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: inherit;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --- Header --- */
+
+.site-header {
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  height: 4rem;
+  padding: 0 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-logo {
+  height: 2rem;
+  width: auto;
+}
+
+.brand-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-label {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+/* --- Buttons --- */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  border: none;
+  border-radius: calc(var(--radius) - 0.125rem);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.theme-toggle .icon-moon,
+.dark .theme-toggle .icon-sun {
+  display: inline-flex;
+}
+
+.theme-toggle .icon-sun,
+.dark .theme-toggle .icon-moon {
+  display: none;
+}
+
+.theme-toggle span {
+  align-items: center;
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.pill-btn:hover {
+  background: hsl(var(--primary) / 0.2);
+}
+
+.pill-btn span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background: hsl(var(--primary) / 0.9);
+}
+
+/* --- Main layout --- */
+
+.page-main {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.controls-row h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.controls-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Hide-empty-skills toggle (state lives on <body>) */
+body:not(.hide-empty) .when-hidden,
+body.hide-empty .when-visible {
+  display: none !important;
+}
+
+body.hide-empty .skill-card[data-empty="true"] {
+  display: none;
+}
+
+/* --- Skill cards (accordion) --- */
+
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skill-card {
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  transition: background-color 0.2s ease;
+}
+
+.skill-card:hover {
+  background: hsl(var(--accent) / 0.5);
+}
+
+.skill-card[data-empty="true"] {
+  opacity: 0.6;
+}
+
+.skill-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.skill-summary::-webkit-details-marker {
+  display: none;
+}
+
+.skill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  flex-shrink: 0;
+  border-radius: calc(var(--radius) - 0.125rem);
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+
+.skill-title {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.skill-name {
+  font-weight: 600;
+}
+
+.skill-meta {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.skill-body {
+  padding: 0 1rem 1rem;
+}
+
+.undo-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.undo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: calc(var(--radius) - 0.25rem);
+  background: hsl(38 92% 40% / 0.1);
+  color: hsl(36 77% 34%);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.dark .undo-btn {
+  background: hsl(45 93% 58% / 0.1);
+  color: hsl(45 93% 58%);
+}
+
+.undo-btn:hover:not(:disabled) {
+  background: hsl(38 92% 40% / 0.2);
+}
+
+.undo-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-list {
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 0.5rem;
+}
+
+.settings-entry {
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 0.75rem 0;
+}
+
+.settings-entry:last-of-type {
+  border-bottom: 0;
+}
+
+/* --- Setting nodes (recursive editor) --- */
+
+.setting-node {
+  margin: 0.15rem 0;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.setting-label-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.setting-key {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: hsl(var(--primary));
+  overflow-wrap: anywhere;
+}
+
+.setting-key.array-index {
+  color: hsl(217 91% 60%);
+}
+
+.setting-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.inline-form {
+  display: inline-flex;
+  margin: 0;
+}
+
+.add-btn {
+  color: hsl(142 71% 35%);
+}
+
+.add-btn:hover {
+  color: hsl(142 71% 29%);
+}
+
+.delete-btn {
+  color: hsl(0 84% 60%);
+}
+
+.delete-btn:hover {
+  color: hsl(0 72% 51%);
+}
+
+.confirm-btn {
+  color: hsl(142 71% 35%);
+}
+
+.cancel-btn {
+  color: hsl(0 72% 51%);
+}
+
+.setting-value {
+  padding-left: 0.5rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.setting-children {
+  margin-left: 1rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* --- Forms (edit / add) --- */
+
+.control {
+  width: 100%;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid hsl(var(--input));
+  border-radius: calc(var(--radius) - 0.25rem);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.control:focus {
+  outline: 2px solid hsl(var(--ring) / 0.5);
+  outline-offset: 1px;
+}
+
+.control-narrow {
+  width: 6rem;
+}
+
+.control-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.edit-form,
+.add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0;
+  padding: 0.5rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) - 0.125rem);
+  background: hsl(var(--muted) / 0.5);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.empty-note {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+  padding: 0.25rem;
+}
+
+.add-setting {
+  padding-top: 0.5rem;
+}
+
+.add-setting-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  border: none;
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.add-setting-btn:hover {
+  color: hsl(var(--foreground));
+}
+
+/* --- Footer --- */
+
+.site-footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.site-footer p {
+  margin: 0.25rem 0;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+/* --- Login page --- */
+
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 28rem;
+  padding: 2rem;
+  border-radius: var(--radius);
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.login-brand {
+  text-align: center;
+}
+
+.login-brand img {
+  margin: 0 auto;
+}
+
+.login-logo-text {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
+}
+
+.login-brand h2 {
+  margin: 1.5rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.login-form {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid hsl(var(--input));
+  border-radius: var(--radius);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+}
+
+.login-field input:focus {
+  outline: 2px solid hsl(var(--ring) / 0.5);
+  outline-offset: 1px;
+}
+
+.login-error {
+  text-align: center;
+  font-size: 0.875rem;
+  color: hsl(var(--destructive));
+}
+
+@media (max-width: 640px) {
+  .header-inner,
+  .page-main {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
