@@ -1,16 +1,4 @@
-# Stage 1: Build the frontend
-FROM node:22-alpine AS frontend-builder
-WORKDIR /app/frontend/ovos-settings-ui
-
-# Copy the entire frontend project context
-# This ensures all source files, libs, configs, etc. are included
-COPY frontend/ovos-settings-ui/ ./
-
-# Install dependencies and build
-RUN npm install
-RUN npx vite build
-
-# Stage 2: Build the backend dependencies
+# Stage 1: Build the backend dependencies
 FROM python:3.13-slim AS backend-builder
 # Add ARGs for build platform
 ARG TARGETPLATFORM 
@@ -55,7 +43,7 @@ COPY --chown=appuser:appuser ovos_skill_config/ /app/ovos_skill_config
 # Using uv for faster installs
 RUN uv pip install .
 
-# Stage 3: Final image
+# Stage 2: Final image
 FROM python:3.13-slim AS final
 WORKDIR /app
 
@@ -68,11 +56,9 @@ ARG VENV_PATH=/opt/venv # Keep VENV_PATH ARG for clarity here
 COPY --chown=appuser:appuser --from=backend-builder ${VENV_PATH} ${VENV_PATH}
 ENV PATH="${VENV_PATH}/bin:$PATH"
 
-# Create the target static directory
-RUN mkdir -p /app/static
-
-# Copy built frontend assets to the new static location
-COPY --chown=appuser:appuser --from=frontend-builder /app/frontend/ovos-settings-ui/dist /app/static
+# Copy static assets (CSS, JS, vendored htmx, branding) to the volume-mountable
+# static location; templates ship inside the installed package
+COPY --chown=appuser:appuser ovos_skill_config/static /app/static
 
 # Change ownership to the non-root user
 # Ensure static dir, venv and config dir are owned by appuser

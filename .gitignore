@@ -25,7 +25,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-!./frontend/ovos-settings-ui/src/lib/
 lib/
 lib64/
 parts/
