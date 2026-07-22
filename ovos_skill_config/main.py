@@ -1,6 +1,7 @@
 import base64
 import os
 import secrets
+import sys
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List
@@ -277,6 +278,10 @@ async def replace_skill_settings(
 # HTML routes (server-rendered UI) must be registered before the static mount.
 # Imported here (not at the top) because ovos_skill_config.web imports back into
 # this module for SkillSettings and friends.
+# When run as a script (python -m ovos_skill_config.main), this module loads as
+# "__main__"; register it under its canonical name so web's import binds to this
+# same module instead of re-executing it (circular-import crash otherwise).
+sys.modules.setdefault("ovos_skill_config.main", sys.modules[__name__])
 from ovos_skill_config.web import router as web_router  # noqa: E402
 
 app.include_router(web_router)

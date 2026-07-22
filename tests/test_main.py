@@ -139,6 +139,18 @@ class TestAPI:
         assert "old_key" not in data["settings"]
         assert data["settings"]["new_key"] == "new_value"
 
+    def test_replace_skill_settings_preserves_empty_values(
+        self, mock_config_dir, test_skill_id
+    ):
+        """Empty dicts, lists, and strings must survive a replace round-trip."""
+        new_settings = {"empty_obj": {}, "empty_list": [], "empty_str": ""}
+        response = client.post(f"/api/v1/skills/{test_skill_id}", json=new_settings)
+        assert response.status_code == 200
+        assert response.json()["settings"] == new_settings
+
+        response = client.get(f"/api/v1/skills/{test_skill_id}")
+        assert response.json()["settings"] == new_settings
+
     def test_unauthorized_access(self, mock_config_dir, test_skill_id):
         """Test that endpoints require authentication when override is removed."""
         # Temporarily remove the override for this test
