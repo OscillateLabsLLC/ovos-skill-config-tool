@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.8.3...v1.0.0) (2026-07-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* rewrite frontend from React/Vite to server-rendered Jinja2 + htmx ([#41](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/issues/41))
+
+### Features
+
+* rewrite frontend from React/Vite to server-rendered Jinja2 + htmx ([#41](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/issues/41)) ([a6013fa](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/a6013fa36e5ccaaa2ca4dc345f398c19c9d2060d))
+
 ## [0.8.3](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.8.2...v0.8.3) (2026-07-21)
 
 
