@@ -2,13 +2,6 @@
 .git
 .gitignore
 
-# Node specific
-node_modules
-npm-debug.log
-frontend/ovos-settings-ui/node_modules
-frontend/ovos-settings-ui/dist
-frontend/ovos-settings-ui/build
-
 # Python specific
 __pycache__
 *.pyc

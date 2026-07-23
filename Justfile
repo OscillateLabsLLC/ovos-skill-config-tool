@@ -1,11 +1,5 @@
 image_name := "ovos-skill-config-tool:latest"
 
-build-fe:
-  rm -rf ovos_skill_config/static && \
-  mkdir -p ovos_skill_config/static && \
-  cd frontend/ovos-settings-ui && \
-  npx vite build && \
-  cp -R dist/* ../../ovos_skill_config/static
 run:
   uv run python -m ovos_skill_config.main
 test:

@@ -1,1 +1,2 @@
 recursive-include ovos_skill_config/static *
+recursive-include ovos_skill_config/templates *

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-brand">
+      {% if logo.type == "image" %}
+      <img src="{{ logo.src }}" alt="{{ logo.alt or logo.text or 'Logo' }}" width="{{ logo.width or 64 }}" height="{{ logo.height or 64 }}" />
+      {% else %}
+      <h1 class="login-logo-text">{{ logo.text or logo.alt or "OVOS" }}</h1>
+      {% endif %}
+      <h2>Sign in to your account</h2>
+    </div>
+    <form method="post" action="/login" class="login-form">
+      {% if error %}<div class="login-error">{{ error }}</div>{% endif %}
+      <div class="login-field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" required autofocus />
+      </div>
+      <div class="login-field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required />
+      </div>
+      <button type="submit" class="primary-btn">Sign in</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

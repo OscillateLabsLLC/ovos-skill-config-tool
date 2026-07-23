@@ -1,4 +1,5 @@
 import base64
+import os
 from unittest.mock import patch
 
 import pytest
@@ -44,6 +45,31 @@ class TestSkillSettings:
         settings = SkillSettings(test_skill_id)
         assert settings.settings_path.parent.exists()
         assert str(settings.settings_path).endswith("settings.json")
+
+    @pytest.mark.parametrize(
+        "bad_id",
+        [
+            "",
+            ".",
+            "..",
+            "../evil",
+            "a/b",
+            "/etc",
+            "skill/../../../etc",
+            "../escape",
+        ],
+    )
+    def test_invalid_skill_id_rejected(self, mock_config_dir, bad_id):
+        """Skill ids that could escape the config dir must be refused."""
+        with pytest.raises(ValueError, match="Invalid skill id"):
+            SkillSettings(bad_id)
+        # Nothing was created outside (or inside) the config dir
+        assert list(mock_config_dir.iterdir()) == []
+
+    def test_skill_id_stays_inside_config_dir(self, mock_config_dir, test_skill_id):
+        settings = SkillSettings(test_skill_id)
+        root = os.path.realpath(str(mock_config_dir))
+        assert str(settings.settings_path).startswith(root + os.sep)
 
     def test_get_setting_with_default(self, skill_settings):
         value = skill_settings.get_setting("nonexistent", default="default_value")
@@ -138,6 +164,18 @@ class TestAPI:
         data = response.json()
         assert "old_key" not in data["settings"]
         assert data["settings"]["new_key"] == "new_value"
+
+    def test_replace_skill_settings_preserves_empty_values(
+        self, mock_config_dir, test_skill_id
+    ):
+        """Empty dicts, lists, and strings must survive a replace round-trip."""
+        new_settings = {"empty_obj": {}, "empty_list": [], "empty_str": ""}
+        response = client.post(f"/api/v1/skills/{test_skill_id}", json=new_settings)
+        assert response.status_code == 200
+        assert response.json()["settings"] == new_settings
+
+        response = client.get(f"/api/v1/skills/{test_skill_id}")
+        assert response.json()["settings"] == new_settings
 
     def test_unauthorized_access(self, mock_config_dir, test_skill_id):
         """Test that endpoints require authentication when override is removed."""
@@ -315,10 +353,13 @@ class TestGetConfigDir:
         get_config_dir.cache_clear()
 
         with patch.dict(
-            "os.environ", {"XDG_CONFIG_HOME": "", "OVOS_CONFIG_BASE_FOLDER": ""}, clear=False
+            "os.environ",
+            {"XDG_CONFIG_HOME": "", "OVOS_CONFIG_BASE_FOLDER": ""},
+            clear=False,
         ):
             # Remove env vars if set
             import os
+
             xdg = os.environ.pop("XDG_CONFIG_HOME", None)
             base = os.environ.pop("OVOS_CONFIG_BASE_FOLDER", None)
             get_config_dir.cache_clear()
@@ -342,6 +383,7 @@ class TestGetConfigDir:
 
         with patch.dict("os.environ", {"XDG_CONFIG_HOME": str(tmp_path)}, clear=False):
             import os
+
             os.environ.pop("OVOS_CONFIG_BASE_FOLDER", None)
             get_config_dir.cache_clear()
 

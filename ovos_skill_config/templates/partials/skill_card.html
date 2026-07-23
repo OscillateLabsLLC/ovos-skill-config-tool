@@ -1,0 +1,28 @@
+{% import "partials/_macros.html" as ui %}
+<details class="skill-card" data-skill-id="{{ skill.id }}"{% if skill.count == 0 %} data-empty="true"{% endif %}{% if open %} open{% endif %}>
+  <summary class="skill-summary">
+    <span class="skill-icon">{{ ui.icon("settings") }}</span>
+    <span class="skill-title">
+      <span class="skill-name">{{ skill.name }}</span>
+      <span class="skill-meta">by {{ skill.author }} &bull; {{ skill.count }} settings</span>
+    </span>
+  </summary>
+  <div class="skill-body">
+    <div class="undo-row">
+      <form class="inline-form" hx-post="/web/skills/{{ skill.id }}/undo" hx-target="closest .skill-card" hx-swap="outerHTML">
+        <button type="submit" class="undo-btn" title="Undo Single Last Change (per skill)"{% if not skill.has_undo %} disabled{% endif %}>{{ ui.icon("undo", 14) }} Undo Change</button>
+      </form>
+    </div>
+    <div class="settings-list">
+      {% for key, value in skill.settings.items() %}
+      <div class="settings-entry">
+        {{ ui.render_node(skill.id, key, value, [key]) }}
+      </div>
+      {% endfor %}
+      <div class="add-setting">
+        <button type="button" class="add-setting-btn" data-action="add">{{ ui.icon("plus", 22) }} Add Setting</button>
+        {{ ui.add_form(skill.id, [], "object", key_placeholder="Setting name") }}
+      </div>
+    </div>
+  </div>
+</details>

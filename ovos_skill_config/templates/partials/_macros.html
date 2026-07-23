@@ -1,0 +1,130 @@
+{#- Shared UI macros: inline SVG icons and the recursive setting editor. -#}
+
+{% macro icon(name, size=16) -%}
+{%- if name == "github" -%}
+<svg role="img" viewBox="0 0 24 24" width="{{ size }}" height="{{ size }}" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+{%- else -%}
+<svg viewBox="0 0 24 24" width="{{ size }}" height="{{ size }}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{%- if name == "settings" -%}
+<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+{%- elif name == "eye" -%}
+<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+{%- elif name == "eye-off" -%}
+<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/>
+{%- elif name == "sun" -%}
+<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+{%- elif name == "moon" -%}
+<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+{%- elif name == "download" -%}
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+{%- elif name == "logout" -%}
+<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+{%- elif name == "pencil" -%}
+<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+{%- elif name == "trash" -%}
+<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+{%- elif name == "check" -%}
+<polyline points="20 6 9 17 4 12"/>
+{%- elif name == "x" -%}
+<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+{%- elif name == "plus" -%}
+<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+{%- elif name == "plus-circle" -%}
+<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+{%- elif name == "undo" -%}
+<path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/>
+{%- endif -%}
+</svg>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro add_form(skill_id, container_path, container_type, key_placeholder="New field name") %}
+<form class="add-form hidden" hx-post="/web/skills/{{ skill_id }}/add" hx-target="closest .skill-card" hx-swap="outerHTML">
+  <input type="hidden" name="container_path" value='{{ container_path | tojson }}' />
+  {% if container_type == "object" %}
+  <input type="text" name="key" placeholder="{{ key_placeholder }}" class="control" />
+  {% endif %}
+  <select name="type" class="control" data-role="type-select">
+    <option value="string">String</option>
+    <option value="number">Number</option>
+    <option value="boolean">Boolean</option>
+    <option value="object">Object (empty)</option>
+    <option value="array">Array (empty)</option>
+  </select>
+  <input type="text" name="value" placeholder="Value" class="control" data-value="text" />
+  <select name="value" class="control" data-value="boolean" hidden disabled>
+    <option value="true">True</option>
+    <option value="false">False</option>
+  </select>
+  <div class="empty-note" data-value="empty" hidden>(Initial value will be empty)</div>
+  <div class="form-actions">
+    <button type="submit" class="icon-btn confirm-btn" title="Save">{{ icon("check", 14) }}</button>
+    <button type="button" class="icon-btn cancel-btn" data-action="cancel" title="Cancel">{{ icon("x", 14) }}</button>
+  </div>
+</form>
+{% endmacro %}
+
+{% macro render_node(skill_id, label, value, path, parent_type=none) %}
+{%- if value is boolean %}{% set ntype = "boolean" %}
+{%- elif value is number %}{% set ntype = "number" %}
+{%- elif value is string %}{% set ntype = "textarea" if "\n" in value else "string" %}
+{%- elif value is mapping %}{% set ntype = "object" %}
+{%- elif value is sequence %}{% set ntype = "array" %}
+{%- else %}{% set ntype = "string" %}
+{%- endif %}
+<div class="setting-node" data-type="{{ ntype }}">
+  <div class="setting-row">
+    <div class="setting-label-group">
+      <span class="setting-key{% if parent_type == 'array' %} array-index{% endif %}">{% if parent_type == "array" %}[{{ label }}]{% else %}{{ label }}{% endif %}</span>
+      {% if ntype in ("object", "array") %}
+      <button type="button" class="icon-btn add-btn" data-action="add" title="{{ 'Add New Field' if ntype == 'object' else 'Add New Item' }}">{{ icon("plus-circle") }}</button>
+      {% endif %}
+    </div>
+    <div class="setting-actions">
+      {% if ntype not in ("object", "array") %}
+      <button type="button" class="icon-btn" data-action="edit" title="Edit">{{ icon("pencil") }}</button>
+      {% endif %}
+      <form class="inline-form" hx-post="/web/skills/{{ skill_id }}/delete" hx-target="closest .skill-card" hx-swap="outerHTML" hx-confirm="Are you sure you want to delete {% if parent_type == 'array' %}item [{{ label }}]{% else %}{{ label }}{% endif %}?">
+        <input type="hidden" name="path" value='{{ path | tojson }}' />
+        <button type="submit" class="icon-btn delete-btn" title="Delete">{{ icon("trash") }}</button>
+      </form>
+    </div>
+  </div>
+  {% if ntype == "object" %}
+  <div class="setting-children">
+    {% for k, v in value.items() %}{{ render_node(skill_id, k, v, path + [k], "object") }}{% endfor %}
+    {{ add_form(skill_id, path, "object") }}
+  </div>
+  {% elif ntype == "array" %}
+  <div class="setting-children">
+    {% for v in value %}{{ render_node(skill_id, loop.index0, v, path + [loop.index0], "array") }}{% endfor %}
+    {{ add_form(skill_id, path, "array") }}
+  </div>
+  {% else %}
+  <div class="setting-value">{% if value is boolean %}{{ "true" if value else "false" }}{% elif value is none %}null{% else %}{{ value }}{% endif %}</div>
+  <form class="edit-form hidden" hx-post="/web/skills/{{ skill_id }}/set" hx-target="closest .skill-card" hx-swap="outerHTML">
+    <input type="hidden" name="path" value='{{ path | tojson }}' />
+    {% if ntype == "boolean" %}
+    <input type="hidden" name="type" value="boolean" />
+    <select name="value" class="control control-narrow">
+      <option value="true"{% if value %} selected{% endif %}>True</option>
+      <option value="false"{% if not value %} selected{% endif %}>False</option>
+    </select>
+    {% elif ntype == "number" %}
+    <input type="hidden" name="type" value="number" />
+    <input type="number" step="any" name="value" value="{{ value }}" class="control" />
+    {% elif ntype == "textarea" %}
+    <input type="hidden" name="type" value="string" />
+    <textarea name="value" class="control control-textarea">{{ value }}</textarea>
+    {% else %}
+    <input type="hidden" name="type" value="string" />
+    <input type="text" name="value" value="{% if value is not none %}{{ value }}{% endif %}" class="control" />
+    {% endif %}
+    <div class="form-actions">
+      <button type="submit" class="icon-btn confirm-btn" title="Save">{{ icon("check") }}</button>
+      <button type="button" class="icon-btn cancel-btn" data-action="cancel" title="Cancel">{{ icon("x") }}</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
+{% endmacro %}

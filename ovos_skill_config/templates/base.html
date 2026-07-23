@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OVOS/Neon Skill Configuration</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/app.css" />
+    <script>
+      // Apply the stored theme before first paint to avoid a flash
+      (function () {
+        var stored = localStorage.getItem("theme-preference");
+        var dark = stored
+          ? stored === "dark"
+          : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (dark) document.documentElement.classList.add("dark");
+      })();
+    </script>
+    <script src="/vendor/htmx.min.js" defer></script>
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    {% block content %}{% endblock %}
+  </body>
+</html>

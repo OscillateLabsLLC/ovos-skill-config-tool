@@ -2,7 +2,7 @@
 
 [![Status: Active](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/OscillateLabsLLC/.github/blob/main/SUPPORT_STATUS.md)
 
-A modern web interface for configuring OpenVoiceOS and Neon AI skills, built with React and FastAPI.
+A modern web interface for configuring OpenVoiceOS and Neon AI skills, built with FastAPI, server-rendered Jinja2 templates, and htmx.
 
 ## Features
 
@@ -18,10 +18,10 @@ A modern web interface for configuring OpenVoiceOS and Neon AI skills, built wit
 
 ## Technology Stack
 
-- **Frontend**: React with Vite
-- **Backend**: FastAPI
-- **Styling**: Modern Tailwind CSS with dark mode support
-- **Security**: Basic Authentication
+- **Backend**: FastAPI with server-rendered Jinja2 templates
+- **Frontend interactivity**: [htmx](https://htmx.org) (vendored, no CDN) plus a small vanilla JS helper
+- **Styling**: Hand-written CSS with dark mode support
+- **Security**: Basic Authentication (cookie-based sessions for the web UI)
 
 ## Installation & Usage
 
@@ -76,11 +76,20 @@ export OVOS_CONFIG_PASSWORD=mypassword
 ovos-skill-config-tool
 ```
 
-All API endpoints under `/api/v1/` require Basic Authentication.
+All API endpoints under `/api/v1/` require Basic Authentication. The web UI uses the same credentials via its login page.
+
+#### Settings Key Sorting
+
+By default, settings keys are displayed and returned in the order they appear in each skill's `settings.json` file. Set `OVOS_CONFIG_SORT_KEYS` to `true` (or `1`/`yes`) to sort top-level settings keys alphabetically in both the web UI and the JSON API responses:
+
+```bash
+export OVOS_CONFIG_SORT_KEYS=true
+ovos-skill-config-tool
+```
 
 #### Customization (Pip Install)
 
-When installed via Pip, the application serves static files (like `index.html`, CSS, JavaScript, and `config.json`) directly from its installation directory within your Python environment's `site-packages`.
+When installed via Pip, the application serves static files (CSS, JavaScript, and `config.json`) directly from its installation directory within your Python environment's `site-packages`.
 
 1.  **Find the Installation Directory:** You can find the location using pip:
 
@@ -97,7 +106,7 @@ When installed via Pip, the application serves static files (like `index.html`, 
 
 **Note:** Modifications made directly within the `site-packages` directory may be overwritten when you update the `ovos-skill-config-tool` package using pip.
 
-**(Advanced):** You can alternatively override the static file directory entirely by setting the `OVOS_CONFIG_STATIC_DIR` environment variable to point to a local directory containing your customized frontend build assets (including `index.html`, JS/CSS, `config.json`, and your logo).
+**(Advanced):** You can alternatively override the static file directory entirely by setting the `OVOS_CONFIG_STATIC_DIR` environment variable to point to a local directory containing the static assets (`app.css`, `app.js`, `vendor/htmx.min.js`, `config.json`, `favicon.ico`, and your logo). Start from a copy of the packaged `ovos_skill_config/static` directory.
 
 ### Method 2: Docker
 
@@ -255,12 +264,8 @@ cd ovos-skill-config-tool
 2. Install dependencies:
 
 ```bash
-# Backend
-pip install .
-
-# Frontend
-cd frontend/ovos-settings-ui
-npm install
+uv sync
+# or: pip install .
 ```
 
 ## Development
@@ -268,9 +273,6 @@ npm install
 This project uses [just](https://github.com/casey/just) as a command runner. Common commands:
 
 ```bash
-# Build frontend
-just build-fe
-
 # Run the application
 just run
 
