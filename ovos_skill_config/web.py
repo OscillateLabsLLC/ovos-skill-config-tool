@@ -2,10 +2,13 @@
 
 import base64
 import copy
+import hashlib
+import hmac
 import json
 import os
 import re
 import secrets
+import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import parse_qsl
@@ -20,6 +23,12 @@ router = APIRouter()
 
 AUTH_COOKIE_NAME = "ovos_config_auth"
 FIRSTRUN_KEY = "__mycroft_skill_firstrun"
+
+# Signing key for session cookies; regenerated at startup, so sessions do not
+# survive a restart (users just log in again). Credentials themselves are never
+# stored client-side.
+SESSION_SECRET = secrets.token_bytes(32)
+SESSION_TTL_SECONDS = 7 * 24 * 60 * 60
 
 # Per-skill single-level undo snapshots: {skill_id: settings before last change}
 UNDO_SNAPSHOTS: Dict[str, Dict] = {}
@@ -46,31 +55,60 @@ def get_skill_info(skill_id: str) -> Dict[str, str]:
     return {"name": name, "author": author}
 
 
+def sign_session(username: str, expires_at: int) -> str:
+    """Create a signed session token: hex(username).expiry.hmac
+
+    Hex keeps the token free of characters that would make SimpleCookie
+    quote the cookie value (base64 padding '=' triggers quoting).
+    """
+    payload = "{}.{}".format(username.encode("utf-8").hex(), expires_at)
+    sig = hmac.new(SESSION_SECRET, payload.encode("ascii"), hashlib.sha256).hexdigest()
+    return "{}.{}".format(payload, sig)
+
+
+def verify_session(token: str) -> Optional[str]:
+    """Return the username for a valid, unexpired session token, else None."""
+    try:
+        encoded_user, expires_str, sig = token.split(".")
+        payload = "{}.{}".format(encoded_user, expires_str)
+        expected = hmac.new(
+            SESSION_SECRET, payload.encode("ascii"), hashlib.sha256
+        ).hexdigest()
+        if not hmac.compare_digest(sig, expected):
+            return None
+        if int(expires_str) < int(time.time()):
+            return None
+        username = bytes.fromhex(encoded_user).decode("utf-8")
+    except Exception:
+        return None
+    if secrets.compare_digest(username, core.DEFAULT_USERNAME):
+        return username
+    return None
+
+
 def get_web_username(request: Request) -> Optional[str]:
-    """Validate credentials from the Authorization header or auth cookie.
+    """Validate a Basic Authorization header or the session cookie.
 
     Returns the username on success, None otherwise. Never raises, so HTML
     routes can redirect to /login instead of triggering the browser's native
     Basic auth prompt.
     """
-    token = None
     auth_header = request.headers.get("Authorization")
     if auth_header and auth_header.startswith("Basic "):
-        token = auth_header.split(" ", 1)[1]
-    else:
-        token = request.cookies.get(AUTH_COOKIE_NAME)
+        try:
+            decoded = base64.b64decode(auth_header.split(" ", 1)[1]).decode("utf-8")
+            username, password = decoded.split(":", 1)
+        except Exception:
+            return None
+        correct_username = secrets.compare_digest(username, core.DEFAULT_USERNAME)
+        correct_password = secrets.compare_digest(password, core.DEFAULT_PASSWORD)
+        if correct_username and correct_password:
+            return username
+        return None
+    token = request.cookies.get(AUTH_COOKIE_NAME)
     if not token:
         return None
-    try:
-        decoded = base64.b64decode(token).decode("utf-8")
-        username, password = decoded.split(":", 1)
-    except Exception:
-        return None
-    correct_username = secrets.compare_digest(username, core.DEFAULT_USERNAME)
-    correct_password = secrets.compare_digest(password, core.DEFAULT_PASSWORD)
-    if correct_username and correct_password:
-        return username
-    return None
+    return verify_session(token)
 
 
 def _login_redirect() -> RedirectResponse:
@@ -272,9 +310,15 @@ async def login_submit(request: Request):
             },
             status_code=401,
         )
-    token = base64.b64encode(f"{username}:{password}".encode()).decode()
+    token = sign_session(username, int(time.time()) + SESSION_TTL_SECONDS)
     response = RedirectResponse(url="/", status_code=303)
-    response.set_cookie(AUTH_COOKIE_NAME, token, httponly=True, samesite="lax")
+    response.set_cookie(
+        AUTH_COOKIE_NAME,
+        token,
+        httponly=True,
+        samesite="lax",
+        max_age=SESSION_TTL_SECONDS,
+    )
     return response
 
 

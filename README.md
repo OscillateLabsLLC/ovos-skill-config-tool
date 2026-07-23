@@ -2,7 +2,7 @@
 
 [![Status: Active](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/OscillateLabsLLC/.github/blob/main/SUPPORT_STATUS.md)
 
-A modern web interface for configuring OpenVoiceOS and Neon AI skills, built with FastAPI, server-rendered Jinja2 templates, and htmx. No Node.js, no build step.
+A modern web interface for configuring OpenVoiceOS and Neon AI skills, built with FastAPI, server-rendered Jinja2 templates, and htmx.
 
 ## Features
 

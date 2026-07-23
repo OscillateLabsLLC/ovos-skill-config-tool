@@ -1,4 +1,5 @@
 import base64
+import os
 from unittest.mock import patch
 
 import pytest
@@ -44,6 +45,31 @@ class TestSkillSettings:
         settings = SkillSettings(test_skill_id)
         assert settings.settings_path.parent.exists()
         assert str(settings.settings_path).endswith("settings.json")
+
+    @pytest.mark.parametrize(
+        "bad_id",
+        [
+            "",
+            ".",
+            "..",
+            "../evil",
+            "a/b",
+            "/etc",
+            "skill/../../../etc",
+            "../escape",
+        ],
+    )
+    def test_invalid_skill_id_rejected(self, mock_config_dir, bad_id):
+        """Skill ids that could escape the config dir must be refused."""
+        with pytest.raises(ValueError, match="Invalid skill id"):
+            SkillSettings(bad_id)
+        # Nothing was created outside (or inside) the config dir
+        assert list(mock_config_dir.iterdir()) == []
+
+    def test_skill_id_stays_inside_config_dir(self, mock_config_dir, test_skill_id):
+        settings = SkillSettings(test_skill_id)
+        root = os.path.realpath(str(mock_config_dir))
+        assert str(settings.settings_path).startswith(root + os.sep)
 
     def test_get_setting_with_default(self, skill_settings):
         value = skill_settings.get_setting("nonexistent", default="default_value")

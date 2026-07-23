@@ -42,9 +42,14 @@ def clear_undo_snapshots():
 
 @pytest.fixture
 def auth_client():
-    """A client with a valid auth cookie set."""
+    """A client with a valid session cookie obtained via login."""
     c = TestClient(app)
-    c.cookies.set(AUTH_COOKIE_NAME, _basic_token())
+    c.post(
+        "/login",
+        data={"username": DEFAULT_USERNAME, "password": DEFAULT_PASSWORD},
+        follow_redirects=False,
+    )
+    assert c.cookies.get(AUTH_COOKIE_NAME)
     return c
 
 
@@ -174,6 +179,56 @@ class TestWebAuth:
         response = auth_client.get("/login", follow_redirects=False)
         assert response.status_code in (302, 303)
         assert response.headers["location"] == "/"
+
+    def test_session_cookie_does_not_contain_password(self, monkeypatch):
+        # Distinct password so its absence from the token is meaningful
+        monkeypatch.setattr("ovos_skill_config.main.DEFAULT_PASSWORD", "s3cret-pw")
+        c = TestClient(app)
+        c.post(
+            "/login",
+            data={"username": DEFAULT_USERNAME, "password": "s3cret-pw"},
+            follow_redirects=False,
+        )
+        token = c.cookies.get(AUTH_COOKIE_NAME)
+        assert token
+        assert token != _basic_token()
+        # Token is hex(username).expiry.hmac — no part decodes to the password
+        encoded_user, expires_str, sig = token.split(".")
+        assert bytes.fromhex(encoded_user).decode() == DEFAULT_USERNAME
+        assert "s3cret-pw" not in token
+        assert "s3cret-pw".encode().hex() not in token
+        assert int(expires_str) > 0
+        assert len(sig) == 64  # sha256 hex digest
+
+    def test_tampered_session_cookie_rejected(self, mock_config_dir):
+        import time as _time
+
+        from ovos_skill_config.web import sign_session
+
+        token = sign_session(DEFAULT_USERNAME, int(_time.time()) + 3600)
+        tampered = token[:-4] + ("0000" if not token.endswith("0000") else "1111")
+        c = TestClient(app)
+        c.cookies.set(AUTH_COOKIE_NAME, tampered)
+        response = c.get("/", follow_redirects=False)
+        assert response.status_code in (302, 303)
+        assert response.headers["location"] == "/login"
+
+    def test_expired_session_cookie_rejected(self, mock_config_dir):
+        from ovos_skill_config.web import sign_session
+
+        expired = sign_session(DEFAULT_USERNAME, 1)  # epoch second 1: long expired
+        c = TestClient(app)
+        c.cookies.set(AUTH_COOKIE_NAME, expired)
+        response = c.get("/", follow_redirects=False)
+        assert response.status_code in (302, 303)
+        assert response.headers["location"] == "/login"
+
+    def test_basic_creds_in_cookie_no_longer_accepted(self, mock_config_dir):
+        c = TestClient(app)
+        c.cookies.set(AUTH_COOKIE_NAME, _basic_token())
+        response = c.get("/", follow_redirects=False)
+        assert response.status_code in (302, 303)
+        assert response.headers["location"] == "/login"
 
 
 class TestIndexRendering:

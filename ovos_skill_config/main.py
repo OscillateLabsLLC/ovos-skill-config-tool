@@ -115,9 +115,23 @@ class SkillSettings:
     def __init__(self, skill_id: str):
         self.skill_id = skill_id
         self.config_dir = get_config_dir()
-        self.settings_path = self.config_dir / skill_id / "settings.json"
+        self.settings_path = self._safe_settings_path(skill_id)
         self.db: JsonStorage
         self._init_db()
+
+    def _safe_settings_path(self, skill_id: str) -> Path:
+        """Resolve the settings path, refusing ids that escape the config dir."""
+        if (
+            not skill_id
+            or skill_id in (".", "..")
+            or skill_id != os.path.basename(skill_id)
+        ):
+            raise ValueError(f"Invalid skill id: {skill_id!r}")
+        root = os.path.realpath(str(self.config_dir))
+        resolved = os.path.realpath(os.path.join(root, skill_id, "settings.json"))
+        if not resolved.startswith(root + os.sep):
+            raise ValueError(f"Invalid skill id: {skill_id!r}")
+        return Path(resolved)
 
     def _init_db(self):
         """Initialize the JsonStorage database, ensuring it contains valid JSON."""
