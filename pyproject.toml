@@ -4,7 +4,7 @@ name = "ovos-skill-config-tool"
 description = "OpenVoiceOS/Neon Skills Configuration Tool"
 license = { "file" = "LICENSE" }
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Topic :: Text Processing :: Linguistic",
     "Programming Language :: Python :: 3",
@@ -22,7 +22,7 @@ dynamic = ["version"]
 urls = { Homepage = "https://github.com/OscillateLabsLLC/ovos-skill-config-tool" }
 scripts = { "ovos-skill-config-tool" = "ovos_skill_config.main:main" }
 dependencies = [
-    "fastapi>=0.115.6",
+    "fastapi>=0.141.1",
     "jinja2>=3.1.6",
     "json-database>=0.7.0",
     "uvicorn>=0.34.0",
