@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v1.0.0...v1.0.1) (2026-08-19)
+
+
+### Bug Fixes
+
+* bump fastapi/starlette, filelock, idna; raise Python floor to 3.10 ([#43](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/issues/43)) ([f994dee](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/f994deed57c99c32aa0177083c357564f8fafaf2))
+
 ## [1.0.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v0.8.3...v1.0.0) (2026-07-23)
 
 
