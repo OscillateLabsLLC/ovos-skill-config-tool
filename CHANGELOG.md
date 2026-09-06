@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v1.0.1...v1.0.2) (2026-09-06)
+
+
+### Bug Fixes
+
+* **deps:** bump pytest to clear Dependabot alert ([#45](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/issues/45)) ([31c2d50](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/31c2d5092f985a0b2f0a2f03d06dad6531d41210))
+
 ## [1.0.1](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v1.0.0...v1.0.1) (2026-08-19)
 
 
