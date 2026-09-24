@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v1.0.2...v1.0.3) (2026-09-24)
+
+
+### Bug Fixes
+
+* **deps:** bump anyio to 4.15.1 for CVE-2026-63374 and CVE-2026-64847 ([#47](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/issues/47)) ([5e53685](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/5e5368546ff9c4b8dc408d4d5f1adc269ed08074))
+
 ## [1.0.2](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v1.0.1...v1.0.2) (2026-09-06)
 
 
