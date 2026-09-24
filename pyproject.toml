@@ -22,6 +22,7 @@ dynamic = ["version"]
 urls = { Homepage = "https://github.com/OscillateLabsLLC/ovos-skill-config-tool" }
 scripts = { "ovos-skill-config-tool" = "ovos_skill_config.main:main" }
 dependencies = [
+    "anyio>=4.14.2",
     "fastapi>=0.141.1",
     "jinja2>=3.1.6",
     "json-database>=0.7.0",
