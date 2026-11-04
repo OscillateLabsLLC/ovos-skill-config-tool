@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.4](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v1.0.3...v1.0.4) (2026-11-04)
+
+
+### Bug Fixes
+
+* **deps:** bump certifi to 2026.10.23 ([4bbdf62](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/4bbdf62defd5e820211b1f4bff58dbc2eaff4122))
+* **deps:** bump certifi to 2026.10.23 ([d98fb88](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/d98fb887bb7b488aa6934a4c9e78813230a0cf58))
+
 ## [1.0.3](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v1.0.2...v1.0.3) (2026-09-24)
 
 
