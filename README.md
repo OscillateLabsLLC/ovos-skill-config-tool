@@ -54,7 +54,9 @@ Once installed, run the tool from your terminal (ensure your virtual environment
 ovos-skill-config-tool
 ```
 
-The application will be available at `http://0.0.0.0:8000` by default.
+The application will be available at `http://0.0.0.0:8000` by default, which means every
+device on your network can reach it. Set `CONFIG_HOST=127.0.0.1` to allow only the machine
+it runs on, and `CONFIG_PORT` to change the port.
 
 #### Authentication (Pip Install)
 
