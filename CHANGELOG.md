@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v1.0.4...v1.1.0) (2026-11-09)
+
+
+### Features
+
+* add CONFIG_HOST to choose the listen address ([b1695d9](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/b1695d975199ad04d7b834fbbcb74c58e954c283))
+* add CONFIG_HOST to choose the listen address ([b6b1f09](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/commit/b6b1f0927eab18f66bf4ca5771b0be3598d94d0e))
+
 ## [1.0.4](https://github.com/OscillateLabsLLC/ovos-skill-config-tool/compare/v1.0.3...v1.0.4) (2026-11-04)
 
 
