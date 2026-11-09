@@ -426,3 +426,23 @@ class TestSkillSettingsErrors:
         # This should not raise
         settings = SkillSettings(skill_id)
         assert settings.settings == {}
+
+
+class TestServerAddress:
+    def test_defaults_to_all_interfaces_on_port_8000(self, monkeypatch):
+        monkeypatch.delenv("CONFIG_HOST", raising=False)
+        monkeypatch.delenv("CONFIG_PORT", raising=False)
+        with patch("uvicorn.run") as run:
+            from ovos_skill_config.main import main
+
+            main()
+        assert run.call_args.kwargs == {"host": "0.0.0.0", "port": 8000}
+
+    def test_host_and_port_come_from_the_environment(self, monkeypatch):
+        monkeypatch.setenv("CONFIG_HOST", "127.0.0.1")
+        monkeypatch.setenv("CONFIG_PORT", "8123")
+        with patch("uvicorn.run") as run:
+            from ovos_skill_config.main import main
+
+            main()
+        assert run.call_args.kwargs == {"host": "127.0.0.1", "port": 8123}
